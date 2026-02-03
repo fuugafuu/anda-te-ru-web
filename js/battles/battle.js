@@ -22,6 +22,8 @@ class BattleSystem {
         this.atkMeterPos = 0;
         this.atkMeterDir = 1;
         this.atkInterval = null;
+        this.cutsceneActive = false;
+        this.specialHit = false;
         
         this.elements = {
             text: document.getElementById('battle-text'),
@@ -52,6 +54,8 @@ class BattleSystem {
         this.spareable = false;
         this.flags = {};
         this.bullets = [];
+        this.cutsceneActive = false;
+        this.specialHit = false;
         
         this.elements.enemySprite.textContent = this.enemy.sprite;
         this.elements.text.innerHTML = `* ${this.enemy.name}が あらわれた！`;
@@ -59,10 +63,15 @@ class BattleSystem {
         this.elements.soul.classList.remove('active');
         this.elements.atkMeter.classList.remove('active');
         this.elements.enemyHpContainer.classList.remove('active');
+        document.getElementById('battle-screen').classList.remove('cutscene');
         
         this.updatePlayerStats();
         this.updateBattleMenu();
         this.game.showScreen('battle');
+
+        if (this.enemy.specialSequence && this.enemy.specialSequence.length) {
+            this.startCutsceneBattle();
+        }
     }
     
     updatePlayerStats() {
@@ -82,6 +91,7 @@ class BattleSystem {
     
     handleInput() {
         const input = this.game.input;
+        if (this.cutsceneActive) return;
         
         if (this.phase === 'menu') {
             if (input.justPressed('ArrowLeft')) { this.menuIndex = Math.max(0, this.menuIndex - 1); this.updateBattleMenu(); }
@@ -352,11 +362,15 @@ class BattleSystem {
         const armorDef = p.armor ? ITEMS[p.armor].def : 0;
         const damage = Math.max(1, baseDamage - LV_STATS[p.lv].df - armorDef);
         p.hp -= damage;
+        if (this.cutsceneActive) {
+            this.specialHit = true;
+            p.hp = Math.max(1, p.hp);
+        }
         this.updatePlayerStats();
         this.invincible = true;
         this.invincibleTimer = BATTLE.INVINCIBILITY_FRAMES;
         this.elements.soul.classList.add('invincible');
-        if (p.hp <= 0) { p.hp = 0; this.updatePlayerStats(); this.gameOver(); }
+        if (p.hp <= 0 && !this.cutsceneActive) { p.hp = 0; this.updatePlayerStats(); this.gameOver(); }
     }
     
     renderBullets() {
@@ -406,6 +420,7 @@ class BattleSystem {
         this.active = false;
         this.bullets = [];
         document.querySelectorAll('.bullet').forEach(b => b.remove());
+        document.getElementById('battle-screen').classList.remove('cutscene');
         if (killed) this.game.flags[this.enemy.id + '_killed'] = true;
         else this.game.flags[this.enemy.id + '_spared'] = true;
         this.game.showScreen('game');
@@ -415,5 +430,96 @@ class BattleSystem {
     gameOver() {
         this.active = false;
         this.game.showScreen('gameover');
+    }
+
+    startCutsceneBattle() {
+        this.cutsceneActive = true;
+        this.phase = 'cutscene';
+        this.elements.submenu.classList.remove('active');
+        this.elements.soul.classList.remove('active');
+        this.elements.atkMeter.classList.remove('active');
+        document.getElementById('battle-screen').classList.add('cutscene');
+        this.runCutsceneStep(0);
+    }
+
+    runCutsceneStep(index) {
+        const sequence = this.enemy.specialSequence || [];
+        if (index >= sequence.length) {
+            this.cutsceneActive = false;
+            this.endBattle(false);
+            return;
+        }
+        const step = sequence[index];
+        if (step.type === 'text') {
+            this.elements.text.innerHTML = (step.text || '').replace(/\n/g, '<br>');
+            this.phase = 'cutscene';
+            const wait = step.wait || 1400;
+            setTimeout(() => this.runCutsceneStep(index + 1), wait);
+            return;
+        }
+        if (step.type === 'branch') {
+            const text = this.specialHit ? step.onHit : step.onMiss;
+            this.elements.text.innerHTML = (text || '').replace(/\n/g, '<br>');
+            this.phase = 'cutscene';
+            const wait = step.wait || 1600;
+            setTimeout(() => this.runCutsceneStep(index + 1), wait);
+            return;
+        }
+        if (step.type === 'attack') {
+            this.startCutsceneAttack(step.attack, step.duration || 180, () => {
+                this.runCutsceneStep(index + 1);
+            });
+        }
+    }
+
+    startCutsceneAttack(attackId, duration, onComplete) {
+        this.phase = 'enemy';
+        this.elements.text.innerHTML = '';
+        this.soul = { x: 280, y: 60 };
+        this.elements.soul.classList.add('active');
+        this.updateSoulPosition();
+
+        this.bullets = [];
+        this.currentAttack = ATTACKS[attackId];
+        if (this.currentAttack) this.currentAttack.setup(this);
+        this.attackTimer = 0;
+
+        const loop = () => {
+            if (!this.cutsceneActive || this.phase !== 'enemy') return;
+            this.attackTimer++;
+
+            const input = this.game.input;
+            if (input.isUp()) this.soul.y -= this.soulSpeed;
+            if (input.isDownDir()) this.soul.y += this.soulSpeed;
+            if (input.isLeft()) this.soul.x -= this.soulSpeed;
+            if (input.isRight()) this.soul.x += this.soulSpeed;
+            this.soul.x = Utils.clamp(this.soul.x, 0, BATTLE.BOX_WIDTH - 16);
+            this.soul.y = Utils.clamp(this.soul.y, 0, BATTLE.BOX_HEIGHT - 16);
+            this.updateSoulPosition();
+
+            if (this.currentAttack) this.currentAttack.update(this, 1);
+            if (!this.invincible) this.checkBulletCollision();
+
+            if (this.invincible) {
+                this.invincibleTimer--;
+                if (this.invincibleTimer <= 0) {
+                    this.invincible = false;
+                    this.elements.soul.classList.remove('invincible');
+                }
+            }
+
+            this.renderBullets();
+            if (this.attackTimer >= duration) {
+                this.elements.soul.classList.remove('active');
+                this.bullets = [];
+                document.querySelectorAll('.bullet').forEach(b => b.remove());
+                this.phase = 'cutscene';
+                if (onComplete) onComplete();
+                return;
+            }
+            requestAnimationFrame(loop);
+        };
+
+        requestAnimationFrame(loop);
     }
 }

@@ -8,6 +8,24 @@ const ENEMIES = {
         exp: 0, gold: 0,
         sprite: '🌻',
         canFlee: false,
+        specialSequence: [
+            { type: 'text', text: '* それが きみの こころのひかり。' },
+            { type: 'text', text: '* きみそのもの みたいな ものさ。' },
+            { type: 'text', text: '* つよくなるには\n  「LV」が ひつよう。' },
+            { type: 'text', text: '* なんだか わかる？\n  ラブって よぶんだ。' },
+            { type: 'text', text: '* いまから すこし わけてあげるね。' },
+            { type: 'text', text: '* ラブは ちいさな\n  なかよしカプセルに つめるんだ。' },
+            { type: 'attack', attack: 'flowey_pellets', duration: 200 },
+            {
+                type: 'branch',
+                onHit: '* うっかりさんだね。\n* ここは いきるか しぬか だけ。',
+                onMiss: '* へえ、よけられるんだ。\n* ここは いきるか しぬか だけ。'
+            },
+            { type: 'text', text: '* <span class="battle-text-big">おわりだ</span>' },
+            { type: 'text', text: '* つよい ひかりが さしこんだ。' },
+            { type: 'text', text: '* フラウィーは かぜに ふきとばされた！' },
+            { type: 'text', text: '* 「ここまでよ、わがこ。」' }
+        ],
         check: '* フラウィ - ATK 0 DEF 0\n* はなの ガイド。にこにこ している。',
         acts: [
             { name: 'チェック', action: 'check' },

@@ -300,6 +300,11 @@ body {
     line-height: 1.7;
 }
 
+.battle-text-big {
+    font-size: 40px;
+    letter-spacing: 2px;
+}
+
 #soul {
     position: absolute;
     width: 16px;
@@ -323,6 +328,11 @@ body {
     margin: 8px auto 0;
     display: flex;
     justify-content: space-between;
+}
+
+#battle-screen.cutscene .battle-menu,
+#battle-screen.cutscene .submenu {
+    display: none;
 }
 
 .b-btn {
