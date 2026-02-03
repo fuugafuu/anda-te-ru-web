@@ -264,6 +264,15 @@ class Game {
     pauseOverworld() {
         this.running = false;
     }
+
+    handleRoomEnter(roomId) {
+        if (roomId === 'ruins_flowey' && !this.flags.flowey_intro_done && !this.dialogue.active) {
+            this.dialogue.show('flowey_intro', () => {
+                this.flags.flowey_intro_done = true;
+                this.battle.start('flowey_tutorial');
+            });
+        }
+    }
     
     // セーブ/ロード
     saveGame() {

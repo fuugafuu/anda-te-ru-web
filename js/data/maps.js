@@ -14,7 +14,10 @@ const MAPS = {
         ],
         collision: [
             { x: 0, y: 0, w: 100, h: 480 },
-            { x: 540, y: 0, w: 100, h: 480 }
+            { x: 540, y: 0, w: 100, h: 480 },
+            { x: 140, y: 120, w: 60, h: 220 },
+            { x: 440, y: 120, w: 60, h: 220 },
+            { x: 200, y: 120, w: 240, h: 40 }
         ]
     },
     
@@ -41,6 +44,11 @@ const MAPS = {
         exits: [
             { x: 280, y: 460, w: 80, h: 20, to: 'ruins_fall', spawnX: 320, spawnY: 50 },
             { x: 280, y: 0, w: 80, h: 20, to: 'ruins_entrance', spawnX: 320, spawnY: 420, requireFlag: 'flowey_intro_done' }
+        ],
+        collision: [
+            { x: 0, y: 0, w: 80, h: 480 },
+            { x: 560, y: 0, w: 80, h: 480 },
+            { x: 180, y: 140, w: 280, h: 40 }
         ]
     },
     
