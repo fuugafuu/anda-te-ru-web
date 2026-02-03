@@ -1,0 +1,502 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+}
+
+body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+#game {
+    width: 640px;
+    height: 480px;
+    background: #000;
+    position: relative;
+    font-family: 'Press Start 2P', monospace;
+    overflow: hidden;
+}
+
+.screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+}
+
+.screen.active { display: block; }
+
+/* ハートカーソル */
+.heart {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background: #ff0000;
+    clip-path: polygon(50% 100%, 0% 35%, 25% 0%, 50% 15%, 75% 0%, 100% 35%);
+    margin-right: 10px;
+    visibility: hidden;
+}
+
+.selected .heart { visibility: visible; }
+
+/* タイトル画面 */
+#title-screen {
+    background: #000;
+    text-align: center;
+}
+
+.title-logo {
+    margin-top: 80px;
+    font-size: 52px;
+    color: #fff;
+    letter-spacing: 4px;
+}
+
+.title-menu {
+    margin-top: 140px;
+}
+
+.menu-item {
+    font-size: 28px;
+    color: #fff;
+    margin: 30px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-item.disabled { color: #444; }
+
+/* 名前入力画面 */
+#name-screen {
+    background: #000;
+    padding: 50px;
+}
+
+.name-prompt {
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    line-height: 2;
+    margin-bottom: 30px;
+}
+
+.name-box {
+    width: 200px;
+    height: 50px;
+    border: 4px solid #fff;
+    margin: 0 auto 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.name-text {
+    color: #fff;
+    font-size: 28px;
+    letter-spacing: 4px;
+}
+
+.name-cursor {
+    color: #fff;
+    font-size: 28px;
+    animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 30px;
+}
+
+.kb-row { display: flex; }
+
+.kb-key {
+    width: 40px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    position: relative;
+}
+
+.kb-key.selected { color: #ff0; }
+
+.kb-key.selected::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    width: 10px;
+    height: 10px;
+    background: #f00;
+    clip-path: polygon(50% 100%, 0% 35%, 25% 0%, 50% 15%, 75% 0%, 100% 35%);
+}
+
+.kb-key.empty { visibility: hidden; }
+
+.name-btns {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.name-btn {
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    position: relative;
+    padding-left: 20px;
+}
+
+.name-btn.selected::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: #f00;
+    clip-path: polygon(50% 100%, 0% 35%, 25% 0%, 50% 15%, 75% 0%, 100% 35%);
+}
+
+/* ゲーム画面 */
+#game-screen { background: #000; }
+#game-canvas { display: block; }
+
+.dialog-box {
+    position: absolute;
+    bottom: 10px;
+    left: 25px;
+    width: 590px;
+    min-height: 150px;
+    background: #000;
+    border: 6px solid #fff;
+    padding: 20px 25px;
+    display: none;
+}
+
+.dialog-box.active { display: block; }
+
+.dialog-face {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    width: 80px;
+    height: 80px;
+    display: none;
+}
+
+.dialog-face.active {
+    display: block;
+}
+
+.dialog-text {
+    color: #fff;
+    font-size: 24px;
+    line-height: 1.8;
+}
+
+.dialog-face.active ~ .dialog-text {
+    margin-left: 100px;
+}
+
+.dialog-arrow {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    color: #fff;
+    font-size: 20px;
+    animation: bounce 0.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+}
+
+/* バトル画面 */
+#battle-screen { background: #000; }
+
+.enemy-area {
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.enemy-sprite {
+    font-size: 100px;
+}
+
+.enemy-hp-container {
+    width: 200px;
+    height: 20px;
+    background: #600;
+    margin-top: 10px;
+    display: none;
+}
+
+.enemy-hp-container.active { display: block; }
+
+.enemy-hp-bar {
+    height: 100%;
+    background: #0f0;
+    width: 100%;
+    transition: width 0.3s;
+}
+
+.battle-box {
+    width: 575px;
+    height: 140px;
+    border: 5px solid #fff;
+    margin: 0 auto;
+    position: relative;
+    background: #000;
+    overflow: hidden;
+}
+
+.battle-text {
+    color: #fff;
+    font-size: 24px;
+    padding: 18px 25px;
+    line-height: 1.7;
+}
+
+#soul {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #f00;
+    clip-path: polygon(50% 100%, 0% 35%, 25% 0%, 50% 15%, 75% 0%, 100% 35%);
+    display: none;
+}
+
+#soul.active { display: block; }
+#soul.blue { background: #00b0ff; }
+#soul.invincible { animation: flash 0.1s infinite; }
+
+@keyframes flash {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0.3; }
+}
+
+.battle-menu {
+    width: 575px;
+    margin: 8px auto 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.b-btn {
+    width: 130px;
+    height: 50px;
+    border: 5px solid #f60;
+    background: #000;
+    color: #f60;
+    font-family: inherit;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.b-btn.selected {
+    background: #f60;
+    color: #000;
+}
+
+.player-info {
+    width: 575px;
+    margin: 10px auto 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #fff;
+    font-size: 18px;
+}
+
+.hp-outer {
+    width: 100px;
+    height: 22px;
+    background: #600;
+}
+
+.hp-inner {
+    height: 100%;
+    background: #ff0;
+    width: 100%;
+    transition: width 0.3s;
+}
+
+.attack-meter {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+}
+
+.attack-meter.active { display: block; }
+
+.atk-target {
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    width: 8px;
+    height: 120px;
+    background: linear-gradient(#fff 0%, #fff 45%, #0f0 45%, #0f0 55%, #fff 55%);
+    transform: translateX(-50%);
+}
+
+.atk-bar {
+    position: absolute;
+    top: 10px;
+    width: 6px;
+    height: 120px;
+    background: #0ff;
+}
+
+.submenu {
+    padding: 15px 25px;
+    display: none;
+}
+
+.submenu.active { display: block; }
+
+.sub-item {
+    color: #fff;
+    font-size: 22px;
+    padding: 6px 0;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;
+}
+
+.sub-item.selected::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #f00;
+    clip-path: polygon(50% 100%, 0% 35%, 25% 0%, 50% 15%, 75% 0%, 100% 35%);
+}
+
+.sub-item.yellow { color: #ff0; }
+
+/* 弾幕 */
+.bullet {
+    position: absolute;
+    background: #fff;
+}
+
+.bullet.pellet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.bullet.bone {
+    background: #fff;
+}
+
+.bullet.blue { background: #00b0ff; }
+.bullet.orange { background: #f90; }
+
+/* ダメージ表示 */
+.damage-num {
+    position: absolute;
+    color: #f00;
+    font-size: 32px;
+    font-family: inherit;
+    animation: dmgFloat 1s forwards;
+    z-index: 100;
+}
+
+@keyframes dmgFloat {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-30px); opacity: 0; }
+}
+
+.damage-num.miss {
+    color: #888;
+    font-size: 24px;
+}
+
+/* ゲームオーバー */
+#gameover-screen {
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.go-text {
+    color: #fff;
+    font-size: 40px;
+    margin-bottom: 60px;
+}
+
+.go-btns {
+    display: flex;
+    gap: 80px;
+}
+
+.go-btn {
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;
+}
+
+.go-btn.selected::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    background: #f00;
+    clip-path: polygon(50% 100%, 0% 35%, 25% 0%, 50% 15%, 75% 0%, 100% 35%);
+}
+
+/* レスポンシブ */
+@media (max-width: 660px) {
+    #game {
+        width: 100vw;
+        height: 75vw;
+    }
+    #game-canvas {
+        width: 100%;
+        height: auto;
+    }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>UNDERTALE</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game">
+        <!-- タイトル画面 -->
+        <div id="title-screen" class="screen active">
+            <h1 class="title-logo">UNDERTALE</h1>
+            <div class="title-menu">
+                <div class="menu-item selected" data-action="start"><span class="heart"></span>はじめから</div>
+                <div class="menu-item disabled" data-action="continue"><span class="heart"></span>つづきから</div>
+            </div>
+        </div>
+        
+        <!-- 名前入力画面 -->
+        <div id="name-screen" class="screen">
+            <p class="name-prompt">おちた にんげんに<br>なまえを つけてください</p>
+            <div class="name-box">
+                <span class="name-text" id="name-text"></span>
+                <span class="name-cursor">_</span>
+            </div>
+            <div class="keyboard" id="keyboard"></div>
+            <div class="name-btns">
+                <button class="name-btn" data-action="quit">やめる</button>
+                <button class="name-btn" data-action="back">もどる</button>
+                <button class="name-btn" data-action="done">おわり</button>
+            </div>
+        </div>
+        
+        <!-- ゲーム画面 -->
+        <div id="game-screen" class="screen">
+            <canvas id="game-canvas" width="640" height="480"></canvas>
+            <div class="dialog-box" id="dialog">
+                <div class="dialog-face" id="dialog-face"></div>
+                <div class="dialog-text" id="dialog-text"></div>
+                <div class="dialog-arrow">▼</div>
+            </div>
+        </div>
+        
+        <!-- バトル画面 -->
+        <div id="battle-screen" class="screen">
+            <div class="enemy-area">
+                <div class="enemy-sprite" id="enemy-sprite"></div>
+                <div class="enemy-hp-container" id="enemy-hp-container">
+                    <div class="enemy-hp-bar" id="enemy-hp-bar"></div>
+                </div>
+            </div>
+            <div class="battle-box" id="battle-box">
+                <div class="battle-text" id="battle-text"></div>
+                <div id="soul"></div>
+                <div class="attack-meter" id="atk-meter">
+                    <div class="atk-target"></div>
+                    <div class="atk-bar" id="atk-bar"></div>
+                </div>
+                <div class="submenu" id="submenu"></div>
+            </div>
+            <div class="battle-menu" id="battle-menu">
+                <button class="b-btn selected" data-action="fight">たたかう</button>
+                <button class="b-btn" data-action="act">こうどう</button>
+                <button class="b-btn" data-action="item">アイテム</button>
+                <button class="b-btn" data-action="mercy">みのがす</button>
+            </div>
+            <div class="player-info">
+                <span id="p-name">CHARA</span>
+                <span>LV <span id="p-lv">1</span></span>
+                <span>HP</span>
+                <div class="hp-outer"><div class="hp-inner" id="hp-bar"></div></div>
+                <span><span id="hp-cur">20</span> / <span id="hp-max">20</span></span>
+            </div>
+        </div>
+        
+        <!-- ゲームオーバー画面 -->
+        <div id="gameover-screen" class="screen">
+            <div class="go-text">ゲームオーバー</div>
+            <div class="go-btns">
+                <div class="go-btn selected" data-action="retry">つづける</div>
+                <div class="go-btn" data-action="quit">やめる</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Audio -->
+    <audio id="bgm" loop></audio>
+    <audio id="sfx"></audio>
+    
+    <!-- Scripts -->
+    <script src="js/utils/constants.js"></script>
+    <script src="js/utils/helpers.js"></script>
+    <script src="js/utils/audio.js"></script>
+    <script src="js/utils/input.js"></script>
+    <script src="js/utils/save.js"></script>
+    <script src="js/data/enemies.js"></script>
+    <script src="js/data/items.js"></script>
+    <script src="js/data/maps.js"></script>
+    <script src="js/data/dialogues.js"></script>
+    <script src="js/engine/renderer.js"></script>
+    <script src="js/engine/dialogue.js"></script>
+    <script src="js/engine/collision.js"></script>
+    <script src="js/battles/attacks.js"></script>
+    <script src="js/battles/battle.js"></script>
+    <script src="js/maps/mapengine.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
