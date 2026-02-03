@@ -40,6 +40,35 @@ class Renderer {
             this.drawSavePoint(room.savePoint.x, room.savePoint.y);
         }
     }
+
+    drawExitHints(room, flags = {}) {
+        if (!room.exits) return;
+        this.ctx.save();
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        for (const exit of room.exits) {
+            if (exit.requireFlag && !flags[exit.requireFlag]) continue;
+            const cx = exit.x + exit.w / 2 - this.camera.x;
+            const cy = exit.y + exit.h / 2 - this.camera.y;
+            this.drawArrow(cx, cy, exit.w, exit.h);
+        }
+        this.ctx.restore();
+    }
+
+    drawArrow(cx, cy, w, h) {
+        const size = 10;
+        this.ctx.beginPath();
+        if (w > h) {
+            this.ctx.moveTo(cx - size, cy - size);
+            this.ctx.lineTo(cx + size, cy);
+            this.ctx.lineTo(cx - size, cy + size);
+        } else {
+            this.ctx.moveTo(cx - size, cy - size);
+            this.ctx.lineTo(cx, cy + size);
+            this.ctx.lineTo(cx + size, cy - size);
+        }
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
     
     drawSavePoint(x, y) {
         const time = Date.now() / 500;

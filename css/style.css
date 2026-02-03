@@ -88,7 +88,9 @@ body {
 /* 名前入力画面 */
 #name-screen {
     background: #000;
-    padding: 50px;
+    padding: 40px 40px 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .name-prompt {
@@ -131,7 +133,8 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 0;
-    margin-bottom: 30px;
+    margin-bottom: 12px;
+    flex: 1;
 }
 
 .kb-row { display: flex; }
@@ -169,6 +172,8 @@ body {
     display: flex;
     justify-content: center;
     gap: 50px;
+    margin-top: 8px;
+    flex-wrap: wrap;
 }
 
 .name-btn {
@@ -263,6 +268,7 @@ body {
 
 .enemy-sprite {
     font-size: 100px;
+    animation: floaty 2s ease-in-out infinite;
 }
 
 .enemy-hp-container {
@@ -280,6 +286,23 @@ body {
     background: #0f0;
     width: 100%;
     transition: width 0.3s;
+}
+
+.enemy-dialog-box {
+    width: 575px;
+    min-height: 60px;
+    margin: 0 auto 6px;
+    background: #fff;
+    color: #000;
+    border: 4px solid #fff;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.6;
+    display: none;
+}
+
+.enemy-dialog-box.active {
+    display: block;
 }
 
 .battle-box {
@@ -333,6 +356,20 @@ body {
 #battle-screen.cutscene .battle-menu,
 #battle-screen.cutscene .submenu {
     display: none;
+}
+
+#battle-screen.battle-start {
+    animation: battleFlash 0.35s ease-out;
+}
+
+@keyframes battleFlash {
+    0% { opacity: 0; transform: scale(0.98); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
 }
 
 .b-btn {

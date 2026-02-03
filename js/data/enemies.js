@@ -15,12 +15,11 @@ const ENEMIES = {
             { type: 'text', text: '* なんだか わかる？\n  ラブって よぶんだ。' },
             { type: 'text', text: '* いまから すこし わけてあげるね。' },
             { type: 'text', text: '* ラブは ちいさな\n  なかよしカプセルに つめるんだ。' },
-            { type: 'attack', attack: 'flowey_pellets', duration: 200 },
-            {
-                type: 'branch',
-                onHit: '* うっかりさんだね。\n* ここは いきるか しぬか だけ。',
-                onMiss: '* へえ、よけられるんだ。\n* ここは いきるか しぬか だけ。'
-            },
+            { type: 'attack', attack: 'flowey_pellets', duration: 200, nextOnHit: 10, nextOnMiss: 7 },
+            { type: 'text', text: '* あれ？ もういっかい いくよ。' },
+            { type: 'attack', attack: 'flowey_pellets', duration: 200, nextOnHit: 10, nextOnMiss: 8 },
+            { type: 'text', text: '* おまえ、しってるだろ。' },
+            { type: 'text', text: '* ばかだね。\n* ここは いきるか しぬか だけ。' },
             { type: 'text', text: '* <span class="battle-text-big">おわりだ</span>' },
             { type: 'text', text: '* つよい ひかりが さしこんだ。' },
             { type: 'text', text: '* フラウィーは かぜに ふきとばされた！' },

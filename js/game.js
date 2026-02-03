@@ -242,6 +242,7 @@ class Game {
         
         this.renderer.updateCamera(this.player, room);
         this.renderer.drawRoom(room);
+        this.renderer.drawExitHints(room, this.flags);
         
         // NPC描画
         if (room.npcs) {

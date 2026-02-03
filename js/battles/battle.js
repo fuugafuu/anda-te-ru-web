@@ -24,6 +24,10 @@ class BattleSystem {
         this.atkInterval = null;
         this.cutsceneActive = false;
         this.specialHit = false;
+        this.cutsceneLastHit = false;
+        this.cutsceneHitCount = 0;
+        this.cutsceneMissCount = 0;
+        this.cutsceneAttackRegistered = false;
         
         this.elements = {
             text: document.getElementById('battle-text'),
@@ -31,6 +35,7 @@ class BattleSystem {
             atkMeter: document.getElementById('atk-meter'),
             atkBar: document.getElementById('atk-bar'),
             submenu: document.getElementById('submenu'),
+            enemyDialog: document.getElementById('enemy-dialog'),
             hpBar: document.getElementById('hp-bar'),
             hpCur: document.getElementById('hp-cur'),
             hpMax: document.getElementById('hp-max'),
@@ -56,14 +61,23 @@ class BattleSystem {
         this.bullets = [];
         this.cutsceneActive = false;
         this.specialHit = false;
+        this.cutsceneLastHit = false;
+        this.cutsceneHitCount = 0;
+        this.cutsceneMissCount = 0;
+        this.cutsceneAttackRegistered = false;
         
         this.elements.enemySprite.textContent = this.enemy.sprite;
         this.elements.text.innerHTML = `* ${this.enemy.name}が あらわれた！`;
+        this.elements.enemyDialog.classList.remove('active');
+        this.elements.enemyDialog.textContent = '';
         this.elements.submenu.classList.remove('active');
         this.elements.soul.classList.remove('active');
         this.elements.atkMeter.classList.remove('active');
         this.elements.enemyHpContainer.classList.remove('active');
-        document.getElementById('battle-screen').classList.remove('cutscene');
+        const battleScreen = document.getElementById('battle-screen');
+        battleScreen.classList.remove('cutscene');
+        battleScreen.classList.add('battle-start');
+        setTimeout(() => battleScreen.classList.remove('battle-start'), 350);
         
         this.updatePlayerStats();
         this.updateBattleMenu();
@@ -108,7 +122,7 @@ class BattleSystem {
         } else if (this.phase === 'text') {
             if (input.isConfirm()) {
                 this.phase = 'menu';
-                this.elements.text.innerHTML = `* ${Utils.randChoice(this.enemy.dialogue || ['・・・'])}`;
+                this.showEnemyDialogue(Utils.randChoice(this.enemy.dialogue || ['・・・']));
             }
         }
     }
@@ -295,6 +309,7 @@ class BattleSystem {
         this.turnCount++;
         this.phase = 'enemy';
         this.elements.text.innerHTML = '';
+        this.elements.enemyDialog.classList.remove('active');
         this.soul = { x: 280, y: 60 };
         this.elements.soul.classList.add('active');
         this.updateSoulPosition();
@@ -364,6 +379,11 @@ class BattleSystem {
         p.hp -= damage;
         if (this.cutsceneActive) {
             this.specialHit = true;
+            this.cutsceneLastHit = true;
+            if (!this.cutsceneAttackRegistered) {
+                this.cutsceneHitCount++;
+                this.cutsceneAttackRegistered = true;
+            }
             p.hp = Math.max(1, p.hp);
         }
         this.updatePlayerStats();
@@ -394,7 +414,7 @@ class BattleSystem {
         this.bullets = [];
         document.querySelectorAll('.bullet').forEach(b => b.remove());
         this.phase = 'menu';
-        this.elements.text.innerHTML = `* ${Utils.randChoice(this.enemy.dialogue || ['・・・'])}`;
+        this.showEnemyDialogue(Utils.randChoice(this.enemy.dialogue || ['・・・']));
     }
     
     enemyDefeated() {
@@ -432,6 +452,12 @@ class BattleSystem {
         this.game.showScreen('gameover');
     }
 
+    showEnemyDialogue(text) {
+        if (!this.elements.enemyDialog) return;
+        this.elements.enemyDialog.textContent = text;
+        this.elements.enemyDialog.classList.add('active');
+    }
+
     startCutsceneBattle() {
         this.cutsceneActive = true;
         this.phase = 'cutscene';
@@ -464,17 +490,12 @@ class BattleSystem {
             setTimeout(() => this.runCutsceneStep(index + 1), wait);
             return;
         }
-        if (step.type === 'branch') {
-            const text = this.specialHit ? step.onHit : step.onMiss;
-            this.elements.text.innerHTML = (text || '').replace(/\n/g, '<br>');
-            this.phase = 'cutscene';
-            const wait = step.wait || 1600;
-            setTimeout(() => this.runCutsceneStep(index + 1), wait);
-            return;
-        }
         if (step.type === 'attack') {
+            const nextOnHit = Number.isInteger(step.nextOnHit) ? step.nextOnHit : index + 1;
+            const nextOnMiss = Number.isInteger(step.nextOnMiss) ? step.nextOnMiss : index + 1;
             this.startCutsceneAttack(step.attack, step.duration || 180, () => {
-                this.runCutsceneStep(index + 1);
+                const nextIndex = this.cutsceneLastHit ? nextOnHit : nextOnMiss;
+                this.runCutsceneStep(nextIndex);
             });
         }
     }
@@ -490,6 +511,8 @@ class BattleSystem {
         this.currentAttack = ATTACKS[attackId];
         if (this.currentAttack) this.currentAttack.setup(this);
         this.attackTimer = 0;
+        this.cutsceneLastHit = false;
+        this.cutsceneAttackRegistered = false;
 
         const loop = () => {
             if (!this.cutsceneActive || this.phase !== 'enemy') return;
@@ -521,6 +544,9 @@ class BattleSystem {
                 this.bullets = [];
                 document.querySelectorAll('.bullet').forEach(b => b.remove());
                 this.phase = 'cutscene';
+                if (!this.cutsceneAttackRegistered) {
+                    this.cutsceneMissCount++;
+                }
                 if (onComplete) onComplete();
                 return;
             }
