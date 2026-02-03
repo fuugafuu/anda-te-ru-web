@@ -39,6 +39,15 @@ const DIALOGUES = {
             '* それでも とめなくては。'
         ]
     },
+
+    toriel_rescue: {
+        texts: [
+            '* だいじょうぶ？',
+            '* あなたを まもるために\n  ここへ きたわ。',
+            '* こっちへ いらっしゃい。',
+            '* あたたかい ばしょへ いきましょう。'
+        ]
+    },
     
     save_ruins_entrance: {
         texts: [

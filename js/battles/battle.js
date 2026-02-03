@@ -446,7 +446,14 @@ class BattleSystem {
         const sequence = this.enemy.specialSequence || [];
         if (index >= sequence.length) {
             this.cutsceneActive = false;
+            if (this.enemy?.id === 'flowey_tutorial') {
+                this.game.flags.flowey_intro_done = true;
+            }
             this.endBattle(false);
+            if (this.enemy?.id === 'flowey_tutorial') {
+                this.game.mapEngine.loadRoom('ruins_entrance');
+                this.game.dialogue.show('toriel_rescue');
+            }
             return;
         }
         const step = sequence[index];

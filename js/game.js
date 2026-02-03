@@ -171,15 +171,6 @@ class Game {
         this.mapEngine.loadRoom(this.currentRoomId);
         this.overworldLoop();
         
-        // フラウィイベント
-        if (!this.flags.flowey_intro_done && this.currentRoomId === 'ruins_fall') {
-            setTimeout(() => {
-                this.dialogue.showTexts(DIALOGUES.flowey_intro.texts, () => {
-                    this.flags.flowey_intro_done = true;
-                    this.battle.start('flowey_tutorial');
-                });
-            }, 500);
-        }
     }
     
     overworldLoop() {
