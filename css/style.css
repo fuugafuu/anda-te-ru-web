@@ -452,10 +452,13 @@ body {
 /* ゲームオーバー */
 #gameover-screen {
     background: #000;
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+#gameover-screen.active {
+    display: flex;
 }
 
 .go-text {

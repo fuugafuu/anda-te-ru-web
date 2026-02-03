@@ -37,6 +37,11 @@ class Game {
         
         // メニュー
         this.menuIndex = 0;
+
+        // オーバーワールド
+        this.canvas = null;
+        this.ctx = null;
+        this.running = false;
     }
     
     init() {
@@ -74,13 +79,13 @@ class Game {
     
     // タイトル画面
     updateTitleMenu() {
-        const items = document.querySelectorAll('.title-item:not(.disabled)');
-        document.querySelectorAll('.title-item').forEach(e => e.classList.remove('selected'));
+        const items = document.querySelectorAll('.menu-item:not(.disabled)');
+        document.querySelectorAll('.menu-item').forEach(e => e.classList.remove('selected'));
         if (items[this.menuIndex]) items[this.menuIndex].classList.add('selected');
     }
     
     selectTitleItem() {
-        const items = document.querySelectorAll('.title-item:not(.disabled)');
+        const items = document.querySelectorAll('.menu-item:not(.disabled)');
         const action = items[this.menuIndex]?.dataset.action;
         if (action === 'start') this.showScreen('name');
         else if (action === 'continue') this.loadGame();
@@ -157,10 +162,6 @@ class Game {
     }
     
     // オーバーワールド
-    canvas: null,
-    ctx: null,
-    running: false,
-    
     startOverworld() {
         this.running = true;
         this.mapEngine.loadRoom(this.currentRoomId);
@@ -323,10 +324,10 @@ class Game {
         });
         
         // タイトルクリック
-        document.querySelectorAll('.title-item').forEach((item, i) => {
+        document.querySelectorAll('.menu-item').forEach((item, i) => {
             item.onclick = () => {
                 if (item.classList.contains('disabled')) return;
-                const items = document.querySelectorAll('.title-item:not(.disabled)');
+                const items = document.querySelectorAll('.menu-item:not(.disabled)');
                 this.menuIndex = Array.from(items).indexOf(item);
                 this.updateTitleMenu();
                 this.selectTitleItem();
@@ -358,7 +359,7 @@ class Game {
     }
     
     handleTitleInput(code) {
-        const items = document.querySelectorAll('.title-item:not(.disabled)');
+        const items = document.querySelectorAll('.menu-item:not(.disabled)');
         if (code === 'ArrowUp') {
             this.menuIndex = Math.max(0, this.menuIndex - 1);
             this.updateTitleMenu();
