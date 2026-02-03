@@ -79,6 +79,10 @@ class Game {
     
     // タイトル画面
     updateTitleMenu() {
+        const continueItem = document.querySelector('.menu-item[data-action="continue"]');
+        if (continueItem) {
+            continueItem.classList.toggle('disabled', !this.save.hasSave());
+        }
         const items = document.querySelectorAll('.menu-item:not(.disabled)');
         document.querySelectorAll('.menu-item').forEach(e => e.classList.remove('selected'));
         if (items[this.menuIndex]) items[this.menuIndex].classList.add('selected');
@@ -318,6 +322,8 @@ class Game {
                 this.handleNameInput(e.code);
             } else if (this.state === 'battle' && this.battle.active) {
                 this.battle.handleInput();
+            } else if (this.state === 'game' && e.code === 'KeyS' && !this.dialogue.active) {
+                this.saveGame();
             } else if (this.state === 'gameover') {
                 this.handleGameOverInput(e.code);
             }
