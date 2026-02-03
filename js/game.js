@@ -174,14 +174,7 @@ class Game {
         // フラウィイベント
         if (!this.flags.flowey_intro_done && this.currentRoomId === 'ruins_fall') {
             setTimeout(() => {
-                this.dialogue.showTexts([
-                    '* やあ！',
-                    '* ぼくは フラウィ。\n  フラウィ・ザ・フラワー！',
-                    '* きみは この世界に\n  はじめて きたんだね？',
-                    '* まいったな・・・\n  だれか おしえてあげないと。',
-                    '* いいよ！\n  ぼくが おしえてあげる！',
-                    '* じゅんびは いい？\n  いくよ！'
-                ], () => {
+                this.dialogue.showTexts(DIALOGUES.flowey_intro.texts, () => {
                     this.flags.flowey_intro_done = true;
                     this.battle.start('flowey_tutorial');
                 });

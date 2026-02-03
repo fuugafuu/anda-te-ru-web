@@ -8,18 +8,18 @@ const ENEMIES = {
         exp: 0, gold: 0,
         sprite: '🌻',
         canFlee: false,
-        check: '* フラウィ - ATK 0 DEF 0\n* きみの ベストフレンド！',
+        check: '* フラウィ - ATK 0 DEF 0\n* はなの ガイド。にこにこ している。',
         acts: [
             { name: 'チェック', action: 'check' },
             { name: 'はなす', action: 'talk' }
         ],
-        dialogue: ['あはは！', 'ぼくの ペレットを あつめてね！'],
+        dialogue: ['あはは！', 'あおいひかりを あつめてね！'],
         attacks: ['flowey_pellets'],
         onCheck: function(battle) {
             return this.check;
         },
         onTalk: function(battle) {
-            return '* フラウィに はなしかけた。\n* ニヤニヤ わらっている。';
+            return '* フラウィに はなしかけた。\n* はなびらが ゆれている。';
         }
     },
     
@@ -144,13 +144,13 @@ const ENEMIES = {
         sprite: '🐐',
         canFlee: false,
         isBoss: true,
-        check: '* トリエル - ATK 80 DEF 80\n* 「いせき」のばんにん。\n  ふしぎな やさしさを もっている。',
+        check: '* トリエル - ATK 80 DEF 80\n* ふるい いせきの みちびき。\n  しずかな つよさを もっている。',
         acts: [
             { name: 'チェック', action: 'check' },
             { name: 'はなす', action: 'talk' }
         ],
         attacks: ['toriel_fire_spread', 'toriel_fire_wave'],
-        dialogue: ['・・・', 'なぜ あきらめない？', 'たたかえ または さりなさい！'],
+        dialogue: ['・・・', 'それでも すすむの？', 'あなたを とめるわ。'],
         flags: { talkCount: 0, spareCount: 0 },
         spareCondition: function(battle) {
             return battle.flags.spareCount >= 24;
@@ -160,7 +160,7 @@ const ENEMIES = {
             const talks = [
                 '* トリエルに はなしかけた。\n* ・・・',
                 '* ・・・・・・',
-                '* ことばでは つたわらないようだ。'
+                '* ことばだけでは\n  つたわらないようだ。'
             ];
             return talks[Math.min(battle.flags.talkCount - 1, talks.length - 1)];
         },
@@ -168,7 +168,7 @@ const ENEMIES = {
             battle.flags.spareCount = (battle.flags.spareCount || 0) + 1;
             if (battle.flags.spareCount >= 24) {
                 battle.spareable = true;
-                return '* ・・・わかった。\n  とめられない のね。';
+                return '* ・・・わかった。\n  こころは とめられないのね。';
             }
             return null;
         },
