@@ -6,7 +6,7 @@ const ENEMIES = {
         hp: 1, maxHp: 1,
         atk: 0, def: 0,
         exp: 0, gold: 0,
-        sprite: '🌻',
+        spriteClass: 'flowey',
         canFlee: false,
         specialSequence: [
             { type: 'text', text: '* それが きみの こころのひかり。' },
@@ -46,7 +46,7 @@ const ENEMIES = {
         hp: 20, maxHp: 20,
         atk: 0, def: 0,
         exp: 0, gold: 0,
-        sprite: '🎭',
+        spriteClass: 'dummy',
         canFlee: true,
         check: '* ダミー - ATK 0 DEF 0\n* コットン100%。きもちが こもっていない。',
         acts: [
@@ -68,7 +68,7 @@ const ENEMIES = {
         hp: 36, maxHp: 36,
         atk: 6, def: 4,
         exp: 4, gold: 3,
-        sprite: '🛡️',
+        spriteClass: 'guard',
         canFlee: true,
         check: '* いせきの みまもり - ATK 6 DEF 4\n* ふるい いせきの くうきに なじんでいる。',
         acts: [
@@ -93,7 +93,7 @@ const ENEMIES = {
         hp: 24, maxHp: 24,
         atk: 5, def: 3,
         exp: 3, gold: 2,
-        sprite: '🟢',
+        spriteClass: 'mossling',
         canFlee: true,
         check: '* コケコロ - ATK 5 DEF 3\n* しっとりした こけの におい。',
         acts: [
@@ -118,7 +118,7 @@ const ENEMIES = {
         hp: 30, maxHp: 30,
         atk: 4, def: 5,
         exp: 3, gold: 2,
-        sprite: '🐸',
+        spriteClass: 'froggit',
         canFlee: true,
         check: '* フロギー - ATK 4 DEF 5\n* いきるのが たいへんな てき。',
         acts: [
@@ -149,7 +149,7 @@ const ENEMIES = {
         hp: 10, maxHp: 10,
         atk: 5, def: 0,
         exp: 2, gold: 2,
-        sprite: '🦋',
+        spriteClass: 'whimsun',
         canFlee: true,
         check: '* ナキムシ - ATK 5 DEF 0\n* きずつきやすすぎて たたかえない・・・',
         acts: [
@@ -173,7 +173,7 @@ const ENEMIES = {
         hp: 88, maxHp: 88,
         atk: 10, def: 10,
         exp: 0, gold: 0,
-        sprite: '👻',
+        spriteClass: 'napstablook',
         canFlee: true,
         isBoss: true,
         check: '* ナプスタブルーク - ATK 10 DEF 10\n* このゴーストは ずっとここにいる。\n  にんげんが いないから・・・',
@@ -208,7 +208,7 @@ const ENEMIES = {
         hp: 440, maxHp: 440,
         atk: 80, def: 80,
         exp: 200, gold: 0,
-        sprite: '🐐',
+        spriteClass: 'toriel',
         canFlee: false,
         isBoss: true,
         check: '* トリエル - ATK 80 DEF 80\n* ふるい いせきの みちびき。\n  しずかな つよさを もっている。',

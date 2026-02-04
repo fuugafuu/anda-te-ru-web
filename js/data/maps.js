@@ -34,7 +34,7 @@ const MAPS = {
                 id: 'flowey',
                 x: 320,
                 y: 200,
-                sprite: '🌻',
+                type: 'flower',
                 dialogue: 'flowey_intro',
                 battleOnEnd: 'flowey_tutorial',
                 disappearFlag: 'flowey_intro_done'
@@ -78,7 +78,8 @@ const MAPS = {
         spawn: { x: 40, y: 240 },
         exits: [
             { x: 0, y: 200, w: 20, h: 80, to: 'ruins_entrance', spawnX: 580, spawnY: 240 },
-            { x: 620, y: 200, w: 20, h: 80, to: 'ruins_puzzle2', spawnX: 40, spawnY: 240 }
+            { x: 620, y: 200, w: 20, h: 80, to: 'ruins_puzzle2', spawnX: 40, spawnY: 240 },
+            { x: 300, y: 0, w: 40, h: 20, to: 'ruins_lever', spawnX: 320, spawnY: 420 }
         ],
         decorations: [
             { x: 160, y: 80, w: 80, h: 120, color: '#2a103d' },
@@ -104,7 +105,6 @@ const MAPS = {
                 id: 'ruins_guide',
                 x: 240,
                 y: 200,
-                sprite: '📜',
                 dialogue: 'ruins_guide'
             }
         ],
@@ -122,6 +122,40 @@ const MAPS = {
         ]
     },
 
+    ruins_lever: {
+        id: 'ruins_lever',
+        name: 'レバーのへや',
+        area: 'ruins',
+        width: 640,
+        height: 480,
+        music: 'mus_ruins',
+        bgColor: '#1a001f',
+        spawn: { x: 320, y: 420 },
+        npcs: [
+            {
+                id: 'ruins_lever',
+                x: 320,
+                y: 200,
+                dialogue: 'ruins_lever',
+                setFlag: 'ruins_lever_on',
+                dialogueOnSet: 'ruins_lever'
+            }
+        ],
+        exits: [
+            { x: 280, y: 460, w: 80, h: 20, to: 'ruins_puzzle1', spawnX: 320, spawnY: 60 },
+            { x: 280, y: 0, w: 80, h: 20, to: 'ruins_bridge', spawnX: 40, spawnY: 160, requireFlag: 'ruins_lever_on' }
+        ],
+        decorations: [
+            { x: 320, y: 200, type: 'lever' },
+            { x: 120, y: 120, w: 140, h: 200, color: '#261038' },
+            { x: 380, y: 120, w: 140, h: 200, color: '#261038' }
+        ],
+        collision: [
+            { x: 120, y: 120, w: 140, h: 200 },
+            { x: 380, y: 120, w: 140, h: 200 }
+        ]
+    },
+
     ruins_bridge: {
         id: 'ruins_bridge',
         name: 'ながいみち',
@@ -136,14 +170,13 @@ const MAPS = {
                 id: 'ruins_guard',
                 x: 480,
                 y: 160,
-                sprite: '🛡️',
+                type: 'guard',
                 battleOnInteract: 'ruins_guard'
             },
             {
                 id: 'ruins_bridge_hint',
                 x: 200,
                 y: 120,
-                sprite: '💬',
                 dialogue: 'ruins_bridge_hint'
             }
         ],
@@ -205,7 +238,7 @@ const MAPS = {
                 id: 'dummy',
                 x: 320,
                 y: 180,
-                sprite: '🎭',
+                type: 'dummy',
                 battleOnInteract: 'dummy',
                 disappearFlag: 'dummy_defeated'
             },
@@ -213,7 +246,7 @@ const MAPS = {
                 id: 'toriel_dummy',
                 x: 200,
                 y: 350,
-                sprite: '🐐',
+                type: 'goat',
                 dialogue: 'toriel_dummy_hint',
                 disappearFlag: 'dummy_defeated'
             }
@@ -273,7 +306,6 @@ const MAPS = {
                 id: 'ruins_garden_sign',
                 x: 300,
                 y: 260,
-                sprite: '🌿',
                 dialogue: 'ruins_garden'
             }
         ],
@@ -307,7 +339,6 @@ const MAPS = {
                 id: 'ruins_storykeeper',
                 x: 360,
                 y: 240,
-                sprite: '🕯️',
                 dialogue: 'ruins_library'
             }
         ],
@@ -340,7 +371,7 @@ const MAPS = {
                 id: 'toriel_home',
                 x: 200,
                 y: 250,
-                sprite: '🐐',
+                type: 'goat',
                 dialogue: 'toriel_home'
             }
         ],
@@ -380,7 +411,7 @@ const MAPS = {
                 id: 'toriel_battle',
                 x: 320,
                 y: 200,
-                sprite: '🐐',
+                type: 'goat',
                 dialogue: 'toriel_battle_intro',
                 battleOnEnd: 'toriel',
                 disappearFlag: 'toriel_defeated'

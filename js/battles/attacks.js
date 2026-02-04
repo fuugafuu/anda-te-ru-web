@@ -16,8 +16,8 @@ const ATTACKS = {
                     h: 12,
                     type: 'pellet',
                     damage: 19,
-                    trackFrames: 50,
-                    speed: 2.8
+                    trackFrames: 35,
+                    speed: 2.2
                 });
             }
         },

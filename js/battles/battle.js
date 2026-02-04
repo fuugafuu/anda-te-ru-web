@@ -12,7 +12,7 @@ class BattleSystem {
         this.flags = {};
         
         this.soul = { x: 280, y: 60 };
-        this.soulSpeed = 4;
+        this.soulSpeed = 3;
         this.invincible = false;
         this.invincibleTimer = 0;
         
@@ -66,7 +66,13 @@ class BattleSystem {
         this.cutsceneMissCount = 0;
         this.cutsceneAttackRegistered = false;
         
-        this.elements.enemySprite.textContent = this.enemy.sprite;
+        this.elements.enemySprite.className = 'enemy-sprite';
+        if (this.enemy.spriteClass) {
+            this.elements.enemySprite.classList.add(this.enemy.spriteClass);
+            this.elements.enemySprite.textContent = '';
+        } else {
+            this.elements.enemySprite.textContent = this.enemy.sprite || '';
+        }
         this.elements.text.innerHTML = `* ${this.enemy.name}が あらわれた！`;
         this.elements.enemyDialog.classList.remove('active');
         this.elements.enemyDialog.textContent = '';

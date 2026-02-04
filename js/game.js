@@ -240,6 +240,11 @@ class Game {
                     this.battle.start(npc.battleOnEnd);
                 }
             });
+        } else if (npc.setFlag) {
+            this.flags[npc.setFlag] = true;
+            if (npc.dialogueOnSet) {
+                this.dialogue.show(npc.dialogueOnSet);
+            }
         } else if (npc.battleOnInteract) {
             this.battle.start(npc.battleOnInteract);
         }

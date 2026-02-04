@@ -71,6 +71,13 @@ const DIALOGUES = {
         ]
     },
 
+    ruins_lever: {
+        texts: [
+            '* （レバーが ある）',
+            '* ひっぱると\n  どこかが ひらくみたいだ。'
+        ]
+    },
+
     route_peaceful: {
         texts: [
             '* （やさしい いきを かんじる）',

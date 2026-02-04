@@ -37,6 +37,10 @@ class Renderer {
 
         if (room.decorations) {
             for (const deco of room.decorations) {
+                if (deco.type === 'lever') {
+                    this.drawLever(deco.x, deco.y);
+                    continue;
+                }
                 this.ctx.fillStyle = deco.color;
                 this.ctx.fillRect(
                     deco.x - this.camera.x,
@@ -101,6 +105,19 @@ class Renderer {
         
         this.ctx.restore();
     }
+
+    drawLever(x, y) {
+        const px = x - this.camera.x;
+        const py = y - this.camera.y;
+        this.ctx.fillStyle = '#4b4b4b';
+        this.ctx.fillRect(px - 8, py + 10, 16, 12);
+        this.ctx.fillStyle = '#b22222';
+        this.ctx.fillRect(px - 2, py - 14, 4, 24);
+        this.ctx.beginPath();
+        this.ctx.arc(px, py - 18, 6, 0, Math.PI * 2);
+        this.ctx.fillStyle = '#ff4444';
+        this.ctx.fill();
+    }
     
     drawStar(cx, cy, r, points) {
         this.ctx.beginPath();
@@ -141,11 +158,40 @@ class Renderer {
     drawNPC(npc) {
         const x = npc.x - this.camera.x;
         const y = npc.y - this.camera.y;
-        
-        this.ctx.font = '40px serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(npc.sprite, x, y);
+
+        if (npc.type === 'flower') {
+            this.ctx.fillStyle = '#ffd166';
+            this.ctx.beginPath();
+            this.ctx.arc(x, y - 6, 10, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.fillStyle = '#2b7a3d';
+            this.ctx.fillRect(x - 2, y + 2, 4, 18);
+            return;
+        }
+        if (npc.type === 'goat') {
+            this.ctx.fillStyle = '#f5f5f5';
+            this.ctx.fillRect(x - 10, y - 14, 20, 28);
+            this.ctx.fillStyle = '#b8b8b8';
+            this.ctx.fillRect(x - 6, y - 4, 12, 18);
+            return;
+        }
+        if (npc.type === 'dummy') {
+            this.ctx.fillStyle = '#cfcfcf';
+            this.ctx.fillRect(x - 8, y - 12, 16, 24);
+            this.ctx.fillStyle = '#999';
+            this.ctx.fillRect(x - 6, y + 6, 12, 6);
+            return;
+        }
+        if (npc.type === 'guard') {
+            this.ctx.fillStyle = '#6b7280';
+            this.ctx.fillRect(x - 10, y - 12, 20, 24);
+            this.ctx.fillStyle = '#374151';
+            this.ctx.fillRect(x - 6, y - 8, 12, 16);
+            return;
+        }
+
+        this.ctx.fillStyle = '#d1d5db';
+        this.ctx.fillRect(x - 8, y - 10, 16, 20);
     }
     
     updateCamera(player, room) {
