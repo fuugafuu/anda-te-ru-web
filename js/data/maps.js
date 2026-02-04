@@ -79,6 +79,14 @@ const MAPS = {
         exits: [
             { x: 0, y: 200, w: 20, h: 80, to: 'ruins_entrance', spawnX: 580, spawnY: 240 },
             { x: 620, y: 200, w: 20, h: 80, to: 'ruins_puzzle2', spawnX: 40, spawnY: 240 }
+        ],
+        decorations: [
+            { x: 160, y: 80, w: 80, h: 120, color: '#2a103d' },
+            { x: 400, y: 260, w: 90, h: 140, color: '#2a103d' }
+        ],
+        collision: [
+            { x: 160, y: 80, w: 80, h: 120 },
+            { x: 400, y: 260, w: 90, h: 140 }
         ]
     },
 
@@ -103,6 +111,14 @@ const MAPS = {
         exits: [
             { x: 0, y: 200, w: 20, h: 80, to: 'ruins_puzzle1', spawnX: 580, spawnY: 240 },
             { x: 620, y: 200, w: 20, h: 80, to: 'ruins_bridge', spawnX: 40, spawnY: 240 }
+        ],
+        decorations: [
+            { x: 120, y: 120, w: 90, h: 200, color: '#261038' },
+            { x: 420, y: 80, w: 110, h: 160, color: '#261038' }
+        ],
+        collision: [
+            { x: 120, y: 120, w: 90, h: 200 },
+            { x: 420, y: 80, w: 110, h: 160 }
         ]
     },
 
@@ -110,7 +126,7 @@ const MAPS = {
         id: 'ruins_bridge',
         name: 'ながいみち',
         area: 'ruins',
-        width: 960,
+        width: 1200,
         height: 320,
         music: 'mus_ruins',
         bgColor: '#1b0022',
@@ -133,7 +149,41 @@ const MAPS = {
         ],
         exits: [
             { x: 0, y: 120, w: 20, h: 80, to: 'ruins_puzzle2', spawnX: 580, spawnY: 240 },
-            { x: 940, y: 120, w: 20, h: 80, to: 'ruins_dummy', spawnX: 40, spawnY: 240 }
+            { x: 1180, y: 120, w: 20, h: 80, to: 'ruins_crossroads', spawnX: 40, spawnY: 160 }
+        ],
+        decorations: [
+            { x: 200, y: 90, w: 160, h: 140, color: '#241030' },
+            { x: 620, y: 60, w: 140, h: 200, color: '#241030' },
+            { x: 880, y: 110, w: 120, h: 120, color: '#241030' }
+        ],
+        collision: [
+            { x: 200, y: 90, w: 160, h: 140 },
+            { x: 620, y: 60, w: 140, h: 200 },
+            { x: 880, y: 110, w: 120, h: 120 }
+        ]
+    },
+
+    ruins_crossroads: {
+        id: 'ruins_crossroads',
+        name: 'みちのひろば',
+        area: 'ruins',
+        width: 800,
+        height: 480,
+        music: 'mus_ruins',
+        bgColor: '#1a0024',
+        spawn: { x: 40, y: 160 },
+        exits: [
+            { x: 0, y: 140, w: 20, h: 80, to: 'ruins_bridge', spawnX: 1140, spawnY: 160 },
+            { x: 780, y: 140, w: 20, h: 80, to: 'ruins_dummy', spawnX: 40, spawnY: 240 },
+            { x: 380, y: 0, w: 40, h: 20, to: 'ruins_garden', spawnX: 320, spawnY: 420 }
+        ],
+        decorations: [
+            { x: 140, y: 220, w: 160, h: 120, color: '#241030' },
+            { x: 460, y: 200, w: 160, h: 140, color: '#241030' }
+        ],
+        collision: [
+            { x: 140, y: 220, w: 160, h: 120 },
+            { x: 460, y: 200, w: 160, h: 140 }
         ]
     },
     
@@ -165,8 +215,16 @@ const MAPS = {
             }
         ],
         exits: [
-            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_bridge', spawnX: 900, spawnY: 160 },
+            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_crossroads', spawnX: 740, spawnY: 160 },
             { x: 620, y: 200, w: 20, h: 80, to: 'ruins_hallway', spawnX: 40, spawnY: 240 }
+        ],
+        decorations: [
+            { x: 120, y: 120, w: 120, h: 80, color: '#2a103d' },
+            { x: 380, y: 300, w: 120, h: 80, color: '#2a103d' }
+        ],
+        collision: [
+            { x: 120, y: 120, w: 120, h: 80 },
+            { x: 380, y: 300, w: 120, h: 80 }
         ]
     },
     
@@ -184,6 +242,14 @@ const MAPS = {
         exits: [
             { x: 0, y: 120, w: 20, h: 80, to: 'ruins_dummy', spawnX: 580, spawnY: 240 },
             { x: 940, y: 120, w: 20, h: 80, to: 'ruins_garden', spawnX: 40, spawnY: 220 }
+        ],
+        decorations: [
+            { x: 260, y: 60, w: 180, h: 80, color: '#241030' },
+            { x: 620, y: 180, w: 160, h: 80, color: '#241030' }
+        ],
+        collision: [
+            { x: 260, y: 60, w: 180, h: 80 },
+            { x: 620, y: 180, w: 160, h: 80 }
         ]
     },
 
@@ -206,8 +272,16 @@ const MAPS = {
             }
         ],
         exits: [
-            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_hallway', spawnX: 900, spawnY: 160 },
+            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_crossroads', spawnX: 400, spawnY: 40 },
             { x: 620, y: 200, w: 20, h: 80, to: 'ruins_library', spawnX: 40, spawnY: 240 }
+        ],
+        decorations: [
+            { x: 180, y: 140, w: 100, h: 200, color: '#233018' },
+            { x: 360, y: 80, w: 120, h: 240, color: '#233018' }
+        ],
+        collision: [
+            { x: 180, y: 140, w: 100, h: 200 },
+            { x: 360, y: 80, w: 120, h: 240 }
         ]
     },
 
@@ -232,6 +306,14 @@ const MAPS = {
         exits: [
             { x: 0, y: 200, w: 20, h: 80, to: 'ruins_garden', spawnX: 580, spawnY: 220 },
             { x: 620, y: 200, w: 20, h: 80, to: 'ruins_home', spawnX: 320, spawnY: 400 }
+        ],
+        decorations: [
+            { x: 120, y: 90, w: 140, h: 140, color: '#2b1038' },
+            { x: 380, y: 240, w: 140, h: 140, color: '#2b1038' }
+        ],
+        collision: [
+            { x: 120, y: 90, w: 140, h: 140 },
+            { x: 380, y: 240, w: 140, h: 140 }
         ]
     },
     

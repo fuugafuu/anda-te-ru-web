@@ -34,6 +34,18 @@ class Renderer {
             this.ctx.fillRect(50 - this.camera.x, 50 - this.camera.y, 60, 150);
             this.ctx.fillRect(room.width - 110 - this.camera.x, 50 - this.camera.y, 60, 150);
         }
+
+        if (room.decorations) {
+            for (const deco of room.decorations) {
+                this.ctx.fillStyle = deco.color;
+                this.ctx.fillRect(
+                    deco.x - this.camera.x,
+                    deco.y - this.camera.y,
+                    deco.w,
+                    deco.h
+                );
+            }
+        }
         
         // セーブポイント
         if (room.savePoint) {

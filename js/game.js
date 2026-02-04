@@ -47,6 +47,7 @@ class Game {
         this.canvas = null;
         this.ctx = null;
         this.running = false;
+        this.overworldFrame = null;
     }
     
     init() {
@@ -185,7 +186,7 @@ class Game {
         this.renderOverworld();
         this.input.update();
         
-        requestAnimationFrame(() => this.overworldLoop());
+        this.overworldFrame = requestAnimationFrame(() => this.overworldLoop());
     }
     
     updateOverworld() {
@@ -262,12 +263,17 @@ class Game {
     }
     
     resumeOverworld() {
+        if (this.running) return;
         this.running = true;
         this.overworldLoop();
     }
     
     pauseOverworld() {
         this.running = false;
+        if (this.overworldFrame) {
+            cancelAnimationFrame(this.overworldFrame);
+            this.overworldFrame = null;
+        }
     }
 
     handleRoomEnter(roomId) {
