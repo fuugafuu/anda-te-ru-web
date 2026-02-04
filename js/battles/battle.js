@@ -81,6 +81,7 @@ class BattleSystem {
         
         this.updatePlayerStats();
         this.updateBattleMenu();
+        this.game.pauseOverworld();
         this.game.showScreen('battle');
 
         if (this.enemy.specialSequence && this.enemy.specialSequence.length) {

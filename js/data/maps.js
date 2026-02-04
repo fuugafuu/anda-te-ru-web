@@ -338,7 +338,8 @@ const MAPS = {
         ],
         exits: [
             { x: 280, y: 460, w: 80, h: 20, to: 'ruins_hallway', spawnX: 900, spawnY: 160 },
-            { x: 280, y: 100, w: 80, h: 20, to: 'ruins_basement', spawnX: 320, spawnY: 420, requireFlag: 'talked_to_toriel' }
+            { x: 280, y: 100, w: 80, h: 20, to: 'ruins_basement', spawnX: 320, spawnY: 420, requireFlag: 'talked_to_toriel' },
+            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_library', spawnX: 580, spawnY: 240 }
         ]
     },
     

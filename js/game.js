@@ -245,10 +245,11 @@ class Game {
     renderOverworld() {
         const room = this.mapEngine.currentRoom;
         if (!room) return;
-        
+
         this.renderer.updateCamera(this.player, room);
         this.renderer.drawRoom(room);
         this.renderer.drawExitHints(room, this.flags);
+        this.updateHud(room);
         
         // NPC描画
         if (room.npcs) {
@@ -260,6 +261,22 @@ class Game {
         
         // プレイヤー描画
         this.renderer.drawPlayer(this.player.x, this.player.y);
+    }
+
+    updateHud(room) {
+        const roomLabel = document.getElementById('hud-room');
+        const routeLabel = document.getElementById('hud-route');
+        if (roomLabel) {
+            roomLabel.textContent = `場所: ${room.name || room.id}`;
+        }
+        if (routeLabel) {
+            const routeName = this.route?.state === 'peaceful'
+                ? '平和'
+                : this.route?.state === 'aggressive'
+                    ? '過激'
+                    : '中立';
+            routeLabel.textContent = `ルート: ${routeName}`;
+        }
     }
     
     resumeOverworld() {
