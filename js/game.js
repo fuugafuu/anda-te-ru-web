@@ -20,6 +20,11 @@ class Game {
         };
         
         this.flags = {};
+        this.route = {
+            kills: 0,
+            spares: 0,
+            state: 'neutral'
+        };
         
         // システム初期化
         this.input = new InputManager();
@@ -272,6 +277,27 @@ class Game {
                 this.battle.start('flowey_tutorial');
             });
         }
+        if (roomId === 'ruins_library' && !this.flags.route_hint_shown && !this.dialogue.active) {
+            const routeDialogue = `route_${this.route.state || 'neutral'}`;
+            this.flags.route_hint_shown = true;
+            this.dialogue.show(routeDialogue);
+        }
+    }
+
+    updateRoute(killed) {
+        if (killed) {
+            this.route.kills += 1;
+        } else {
+            this.route.spares += 1;
+        }
+        if (this.route.kills >= 3) {
+            this.route.state = 'aggressive';
+        } else if (this.route.spares >= 3 && this.route.kills === 0) {
+            this.route.state = 'peaceful';
+        } else {
+            this.route.state = 'neutral';
+        }
+        this.flags.route_state = this.route.state;
     }
     
     // セーブ/ロード
@@ -286,7 +312,8 @@ class Game {
             const data = {
                 player: { ...this.player },
                 room: this.currentRoomId,
-                flags: this.flags
+                flags: this.flags,
+                route: { ...this.route }
             };
             
             if (this.save.save(data)) {
@@ -301,6 +328,7 @@ class Game {
         if (data) {
             Object.assign(this.player, data.player);
             this.flags = data.flags || {};
+            this.route = data.route || { kills: 0, spares: 0, state: 'neutral' };
             this.currentRoomId = data.room || 'ruins_fall';
             this.showScreen('game');
         }

@@ -443,6 +443,9 @@ class BattleSystem {
         document.getElementById('battle-screen').classList.remove('cutscene');
         if (killed) this.game.flags[this.enemy.id + '_killed'] = true;
         else this.game.flags[this.enemy.id + '_spared'] = true;
+        if (this.enemy?.id !== 'flowey_tutorial') {
+            this.game.updateRoute(killed);
+        }
         this.game.showScreen('game');
         this.game.resumeOverworld();
     }

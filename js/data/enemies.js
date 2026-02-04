@@ -61,6 +61,31 @@ const ENEMIES = {
             return '* ダミーに はなしかけた。\n* ダミーは なにも いわない。';
         }
     },
+
+    ruins_guard: {
+        id: 'ruins_guard',
+        name: 'いせきの みまもり',
+        hp: 36, maxHp: 36,
+        atk: 6, def: 4,
+        exp: 4, gold: 3,
+        sprite: '🛡️',
+        canFlee: true,
+        check: '* いせきの みまもり - ATK 6 DEF 4\n* ふるい いせきの くうきに なじんでいる。',
+        acts: [
+            { name: 'チェック', action: 'check' },
+            { name: 'あいさつ', action: 'greet' }
+        ],
+        attacks: ['froggit_jump', 'whimsun_moths'],
+        dialogue: ['・・・', 'みまもっている。'],
+        spareCondition: function(battle) {
+            return battle.flags.greeted;
+        },
+        onGreet: function(battle) {
+            battle.flags.greeted = true;
+            battle.spareable = true;
+            return '* みまもりに あいさつした。\n* おだやかに うなずいた。';
+        }
+    },
     
     froggit: {
         id: 'froggit',

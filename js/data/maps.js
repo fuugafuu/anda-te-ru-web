@@ -78,7 +78,62 @@ const MAPS = {
         spawn: { x: 40, y: 240 },
         exits: [
             { x: 0, y: 200, w: 20, h: 80, to: 'ruins_entrance', spawnX: 580, spawnY: 240 },
-            { x: 620, y: 200, w: 20, h: 80, to: 'ruins_dummy', spawnX: 40, spawnY: 240 }
+            { x: 620, y: 200, w: 20, h: 80, to: 'ruins_puzzle2', spawnX: 40, spawnY: 240 }
+        ]
+    },
+
+    ruins_puzzle2: {
+        id: 'ruins_puzzle2',
+        name: 'ちいさなま',
+        area: 'ruins',
+        width: 640,
+        height: 480,
+        music: 'mus_ruins',
+        bgColor: '#1c0028',
+        spawn: { x: 40, y: 240 },
+        npcs: [
+            {
+                id: 'ruins_guide',
+                x: 240,
+                y: 200,
+                sprite: '📜',
+                dialogue: 'ruins_guide'
+            }
+        ],
+        exits: [
+            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_puzzle1', spawnX: 580, spawnY: 240 },
+            { x: 620, y: 200, w: 20, h: 80, to: 'ruins_bridge', spawnX: 40, spawnY: 240 }
+        ]
+    },
+
+    ruins_bridge: {
+        id: 'ruins_bridge',
+        name: 'ながいみち',
+        area: 'ruins',
+        width: 960,
+        height: 320,
+        music: 'mus_ruins',
+        bgColor: '#1b0022',
+        spawn: { x: 40, y: 160 },
+        npcs: [
+            {
+                id: 'ruins_guard',
+                x: 480,
+                y: 160,
+                sprite: '🛡️',
+                battleOnInteract: 'ruins_guard'
+            },
+            {
+                id: 'ruins_bridge_hint',
+                x: 200,
+                y: 120,
+                sprite: '💬',
+                dialogue: 'ruins_bridge_hint'
+            }
+        ],
+        exits: [
+            { x: 0, y: 120, w: 20, h: 80, to: 'ruins_puzzle2', spawnX: 580, spawnY: 240 },
+            { x: 940, y: 120, w: 20, h: 80, to: 'ruins_dummy', spawnX: 40, spawnY: 240 }
         ]
     },
     
@@ -110,7 +165,7 @@ const MAPS = {
             }
         ],
         exits: [
-            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_puzzle1', spawnX: 580, spawnY: 240 },
+            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_bridge', spawnX: 900, spawnY: 160 },
             { x: 620, y: 200, w: 20, h: 80, to: 'ruins_hallway', spawnX: 40, spawnY: 240 }
         ]
     },
@@ -128,7 +183,55 @@ const MAPS = {
         encounterRate: 0.03,
         exits: [
             { x: 0, y: 120, w: 20, h: 80, to: 'ruins_dummy', spawnX: 580, spawnY: 240 },
-            { x: 940, y: 120, w: 20, h: 80, to: 'ruins_home', spawnX: 320, spawnY: 400 }
+            { x: 940, y: 120, w: 20, h: 80, to: 'ruins_garden', spawnX: 40, spawnY: 220 }
+        ]
+    },
+
+    ruins_garden: {
+        id: 'ruins_garden',
+        name: 'こけのにわ',
+        area: 'ruins',
+        width: 640,
+        height: 480,
+        music: 'mus_ruins',
+        bgColor: '#1a0026',
+        spawn: { x: 40, y: 220 },
+        npcs: [
+            {
+                id: 'ruins_garden_sign',
+                x: 300,
+                y: 260,
+                sprite: '🌿',
+                dialogue: 'ruins_garden'
+            }
+        ],
+        exits: [
+            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_hallway', spawnX: 900, spawnY: 160 },
+            { x: 620, y: 200, w: 20, h: 80, to: 'ruins_library', spawnX: 40, spawnY: 240 }
+        ]
+    },
+
+    ruins_library: {
+        id: 'ruins_library',
+        name: 'しずかなへや',
+        area: 'ruins',
+        width: 640,
+        height: 480,
+        music: 'mus_ruins',
+        bgColor: '#210028',
+        spawn: { x: 40, y: 240 },
+        npcs: [
+            {
+                id: 'ruins_storykeeper',
+                x: 360,
+                y: 240,
+                sprite: '🕯️',
+                dialogue: 'ruins_library'
+            }
+        ],
+        exits: [
+            { x: 0, y: 200, w: 20, h: 80, to: 'ruins_garden', spawnX: 580, spawnY: 220 },
+            { x: 620, y: 200, w: 20, h: 80, to: 'ruins_home', spawnX: 320, spawnY: 400 }
         ]
     },
     
