@@ -26,6 +26,10 @@ class MapEngine {
         if (room.music) {
             this.game.audio.playMusic(room.music);
         }
+
+        if (this.game.handleRoomEnter) {
+            this.game.handleRoomEnter(roomId);
+        }
     }
     
     loadRoomAt(roomId, spawnX, spawnY) {
@@ -39,6 +43,10 @@ class MapEngine {
         
         if (room.music) {
             this.game.audio.playMusic(room.music);
+        }
+
+        if (this.game.handleRoomEnter) {
+            this.game.handleRoomEnter(roomId);
         }
     }
     

@@ -20,6 +20,11 @@ class Game {
         };
         
         this.flags = {};
+        this.route = {
+            kills: 0,
+            spares: 0,
+            state: 'neutral'
+        };
         
         // システム初期化
         this.input = new InputManager();
@@ -37,6 +42,12 @@ class Game {
         
         // メニュー
         this.menuIndex = 0;
+
+        // オーバーワールド
+        this.canvas = null;
+        this.ctx = null;
+        this.running = false;
+        this.overworldFrame = null;
     }
     
     init() {
@@ -74,13 +85,17 @@ class Game {
     
     // タイトル画面
     updateTitleMenu() {
-        const items = document.querySelectorAll('.title-item:not(.disabled)');
-        document.querySelectorAll('.title-item').forEach(e => e.classList.remove('selected'));
+        const continueItem = document.querySelector('.menu-item[data-action="continue"]');
+        if (continueItem) {
+            continueItem.classList.toggle('disabled', !this.save.hasSave());
+        }
+        const items = document.querySelectorAll('.menu-item:not(.disabled)');
+        document.querySelectorAll('.menu-item').forEach(e => e.classList.remove('selected'));
         if (items[this.menuIndex]) items[this.menuIndex].classList.add('selected');
     }
     
     selectTitleItem() {
-        const items = document.querySelectorAll('.title-item:not(.disabled)');
+        const items = document.querySelectorAll('.menu-item:not(.disabled)');
         const action = items[this.menuIndex]?.dataset.action;
         if (action === 'start') this.showScreen('name');
         else if (action === 'continue') this.loadGame();
@@ -157,31 +172,14 @@ class Game {
     }
     
     // オーバーワールド
-    canvas: null,
-    ctx: null,
-    running: false,
-    
     startOverworld() {
+        if (this.running) return;
         this.running = true;
-        this.mapEngine.loadRoom(this.currentRoomId);
+        if (!this.mapEngine.currentRoom) {
+            this.mapEngine.loadRoom(this.currentRoomId);
+        }
         this.overworldLoop();
         
-        // フラウィイベント
-        if (!this.flags.flowey_intro_done && this.currentRoomId === 'ruins_fall') {
-            setTimeout(() => {
-                this.dialogue.showTexts([
-                    '* やあ！',
-                    '* ぼくは フラウィ。\n  フラウィ・ザ・フラワー！',
-                    '* きみは この世界に\n  はじめて きたんだね？',
-                    '* まいったな・・・\n  だれか おしえてあげないと。',
-                    '* いいよ！\n  ぼくが おしえてあげる！',
-                    '* じゅんびは いい？\n  いくよ！'
-                ], () => {
-                    this.flags.flowey_intro_done = true;
-                    this.battle.start('flowey_tutorial');
-                });
-            }, 500);
-        }
     }
     
     overworldLoop() {
@@ -191,7 +189,7 @@ class Game {
         this.renderOverworld();
         this.input.update();
         
-        requestAnimationFrame(() => this.overworldLoop());
+        this.overworldFrame = requestAnimationFrame(() => this.overworldLoop());
     }
     
     updateOverworld() {
@@ -242,6 +240,11 @@ class Game {
                     this.battle.start(npc.battleOnEnd);
                 }
             });
+        } else if (npc.setFlag) {
+            this.flags[npc.setFlag] = true;
+            if (npc.dialogueOnSet) {
+                this.dialogue.show(npc.dialogueOnSet);
+            }
         } else if (npc.battleOnInteract) {
             this.battle.start(npc.battleOnInteract);
         }
@@ -250,9 +253,11 @@ class Game {
     renderOverworld() {
         const room = this.mapEngine.currentRoom;
         if (!room) return;
-        
+
         this.renderer.updateCamera(this.player, room);
         this.renderer.drawRoom(room);
+        this.renderer.drawExitHints(room, this.flags);
+        this.updateHud(room);
         
         // NPC描画
         if (room.npcs) {
@@ -265,14 +270,65 @@ class Game {
         // プレイヤー描画
         this.renderer.drawPlayer(this.player.x, this.player.y);
     }
+
+    updateHud(room) {
+        const roomLabel = document.getElementById('hud-room');
+        const routeLabel = document.getElementById('hud-route');
+        if (roomLabel) {
+            roomLabel.textContent = `場所: ${room.name || room.id}`;
+        }
+        if (routeLabel) {
+            const routeName = this.route?.state === 'peaceful'
+                ? '平和'
+                : this.route?.state === 'aggressive'
+                    ? '過激'
+                    : '中立';
+            routeLabel.textContent = `ルート: ${routeName}`;
+        }
+    }
     
     resumeOverworld() {
+        if (this.running) return;
         this.running = true;
         this.overworldLoop();
     }
     
     pauseOverworld() {
         this.running = false;
+        if (this.overworldFrame) {
+            cancelAnimationFrame(this.overworldFrame);
+            this.overworldFrame = null;
+        }
+    }
+
+    handleRoomEnter(roomId) {
+        if (roomId === 'ruins_flowey' && !this.flags.flowey_intro_done && !this.dialogue.active) {
+            this.dialogue.show('flowey_intro', () => {
+                this.flags.flowey_intro_done = true;
+                this.battle.start('flowey_tutorial');
+            });
+        }
+        if (roomId === 'ruins_library' && !this.flags.route_hint_shown && !this.dialogue.active) {
+            const routeDialogue = `route_${this.route.state || 'neutral'}`;
+            this.flags.route_hint_shown = true;
+            this.dialogue.show(routeDialogue);
+        }
+    }
+
+    updateRoute(killed) {
+        if (killed) {
+            this.route.kills += 1;
+        } else {
+            this.route.spares += 1;
+        }
+        if (this.route.kills >= 3) {
+            this.route.state = 'aggressive';
+        } else if (this.route.spares >= 3 && this.route.kills === 0) {
+            this.route.state = 'peaceful';
+        } else {
+            this.route.state = 'neutral';
+        }
+        this.flags.route_state = this.route.state;
     }
     
     // セーブ/ロード
@@ -287,7 +343,8 @@ class Game {
             const data = {
                 player: { ...this.player },
                 room: this.currentRoomId,
-                flags: this.flags
+                flags: this.flags,
+                route: { ...this.route }
             };
             
             if (this.save.save(data)) {
@@ -302,6 +359,7 @@ class Game {
         if (data) {
             Object.assign(this.player, data.player);
             this.flags = data.flags || {};
+            this.route = data.route || { kills: 0, spares: 0, state: 'neutral' };
             this.currentRoomId = data.room || 'ruins_fall';
             this.showScreen('game');
         }
@@ -317,16 +375,18 @@ class Game {
                 this.handleNameInput(e.code);
             } else if (this.state === 'battle' && this.battle.active) {
                 this.battle.handleInput();
+            } else if (this.state === 'game' && e.code === 'KeyS' && !this.dialogue.active) {
+                this.saveGame();
             } else if (this.state === 'gameover') {
                 this.handleGameOverInput(e.code);
             }
         });
         
         // タイトルクリック
-        document.querySelectorAll('.title-item').forEach((item, i) => {
+        document.querySelectorAll('.menu-item').forEach((item, i) => {
             item.onclick = () => {
                 if (item.classList.contains('disabled')) return;
-                const items = document.querySelectorAll('.title-item:not(.disabled)');
+                const items = document.querySelectorAll('.menu-item:not(.disabled)');
                 this.menuIndex = Array.from(items).indexOf(item);
                 this.updateTitleMenu();
                 this.selectTitleItem();
@@ -358,7 +418,7 @@ class Game {
     }
     
     handleTitleInput(code) {
-        const items = document.querySelectorAll('.title-item:not(.disabled)');
+        const items = document.querySelectorAll('.menu-item:not(.disabled)');
         if (code === 'ArrowUp') {
             this.menuIndex = Math.max(0, this.menuIndex - 1);
             this.updateTitleMenu();

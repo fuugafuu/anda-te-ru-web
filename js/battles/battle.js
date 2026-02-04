@@ -12,7 +12,7 @@ class BattleSystem {
         this.flags = {};
         
         this.soul = { x: 280, y: 60 };
-        this.soulSpeed = 4;
+        this.soulSpeed = 3;
         this.invincible = false;
         this.invincibleTimer = 0;
         
@@ -22,6 +22,12 @@ class BattleSystem {
         this.atkMeterPos = 0;
         this.atkMeterDir = 1;
         this.atkInterval = null;
+        this.cutsceneActive = false;
+        this.specialHit = false;
+        this.cutsceneLastHit = false;
+        this.cutsceneHitCount = 0;
+        this.cutsceneMissCount = 0;
+        this.cutsceneAttackRegistered = false;
         
         this.elements = {
             text: document.getElementById('battle-text'),
@@ -29,6 +35,7 @@ class BattleSystem {
             atkMeter: document.getElementById('atk-meter'),
             atkBar: document.getElementById('atk-bar'),
             submenu: document.getElementById('submenu'),
+            enemyDialog: document.getElementById('enemy-dialog'),
             hpBar: document.getElementById('hp-bar'),
             hpCur: document.getElementById('hp-cur'),
             hpMax: document.getElementById('hp-max'),
@@ -52,17 +59,40 @@ class BattleSystem {
         this.spareable = false;
         this.flags = {};
         this.bullets = [];
+        this.cutsceneActive = false;
+        this.specialHit = false;
+        this.cutsceneLastHit = false;
+        this.cutsceneHitCount = 0;
+        this.cutsceneMissCount = 0;
+        this.cutsceneAttackRegistered = false;
         
-        this.elements.enemySprite.textContent = this.enemy.sprite;
+        this.elements.enemySprite.className = 'enemy-sprite';
+        if (this.enemy.spriteClass) {
+            this.elements.enemySprite.classList.add(this.enemy.spriteClass);
+            this.elements.enemySprite.textContent = '';
+        } else {
+            this.elements.enemySprite.textContent = this.enemy.sprite || '';
+        }
         this.elements.text.innerHTML = `* ${this.enemy.name}が あらわれた！`;
+        this.elements.enemyDialog.classList.remove('active');
+        this.elements.enemyDialog.textContent = '';
         this.elements.submenu.classList.remove('active');
         this.elements.soul.classList.remove('active');
         this.elements.atkMeter.classList.remove('active');
         this.elements.enemyHpContainer.classList.remove('active');
+        const battleScreen = document.getElementById('battle-screen');
+        battleScreen.classList.remove('cutscene');
+        battleScreen.classList.add('battle-start');
+        setTimeout(() => battleScreen.classList.remove('battle-start'), 350);
         
         this.updatePlayerStats();
         this.updateBattleMenu();
+        this.game.pauseOverworld();
         this.game.showScreen('battle');
+
+        if (this.enemy.specialSequence && this.enemy.specialSequence.length) {
+            this.startCutsceneBattle();
+        }
     }
     
     updatePlayerStats() {
@@ -82,6 +112,7 @@ class BattleSystem {
     
     handleInput() {
         const input = this.game.input;
+        if (this.cutsceneActive) return;
         
         if (this.phase === 'menu') {
             if (input.justPressed('ArrowLeft')) { this.menuIndex = Math.max(0, this.menuIndex - 1); this.updateBattleMenu(); }
@@ -98,7 +129,7 @@ class BattleSystem {
         } else if (this.phase === 'text') {
             if (input.isConfirm()) {
                 this.phase = 'menu';
-                this.elements.text.innerHTML = `* ${Utils.randChoice(this.enemy.dialogue || ['・・・'])}`;
+                this.showEnemyDialogue(Utils.randChoice(this.enemy.dialogue || ['・・・']));
             }
         }
     }
@@ -285,6 +316,7 @@ class BattleSystem {
         this.turnCount++;
         this.phase = 'enemy';
         this.elements.text.innerHTML = '';
+        this.elements.enemyDialog.classList.remove('active');
         this.soul = { x: 280, y: 60 };
         this.elements.soul.classList.add('active');
         this.updateSoulPosition();
@@ -352,11 +384,20 @@ class BattleSystem {
         const armorDef = p.armor ? ITEMS[p.armor].def : 0;
         const damage = Math.max(1, baseDamage - LV_STATS[p.lv].df - armorDef);
         p.hp -= damage;
+        if (this.cutsceneActive) {
+            this.specialHit = true;
+            this.cutsceneLastHit = true;
+            if (!this.cutsceneAttackRegistered) {
+                this.cutsceneHitCount++;
+                this.cutsceneAttackRegistered = true;
+            }
+            p.hp = Math.max(1, p.hp);
+        }
         this.updatePlayerStats();
         this.invincible = true;
         this.invincibleTimer = BATTLE.INVINCIBILITY_FRAMES;
         this.elements.soul.classList.add('invincible');
-        if (p.hp <= 0) { p.hp = 0; this.updatePlayerStats(); this.gameOver(); }
+        if (p.hp <= 0 && !this.cutsceneActive) { p.hp = 0; this.updatePlayerStats(); this.gameOver(); }
     }
     
     renderBullets() {
@@ -380,7 +421,7 @@ class BattleSystem {
         this.bullets = [];
         document.querySelectorAll('.bullet').forEach(b => b.remove());
         this.phase = 'menu';
-        this.elements.text.innerHTML = `* ${Utils.randChoice(this.enemy.dialogue || ['・・・'])}`;
+        this.showEnemyDialogue(Utils.randChoice(this.enemy.dialogue || ['・・・']));
     }
     
     enemyDefeated() {
@@ -406,8 +447,12 @@ class BattleSystem {
         this.active = false;
         this.bullets = [];
         document.querySelectorAll('.bullet').forEach(b => b.remove());
+        document.getElementById('battle-screen').classList.remove('cutscene');
         if (killed) this.game.flags[this.enemy.id + '_killed'] = true;
         else this.game.flags[this.enemy.id + '_spared'] = true;
+        if (this.enemy?.id !== 'flowey_tutorial') {
+            this.game.updateRoute(killed);
+        }
         this.game.showScreen('game');
         this.game.resumeOverworld();
     }
@@ -415,5 +460,109 @@ class BattleSystem {
     gameOver() {
         this.active = false;
         this.game.showScreen('gameover');
+    }
+
+    showEnemyDialogue(text) {
+        if (!this.elements.enemyDialog) return;
+        this.elements.enemyDialog.textContent = text;
+        this.elements.enemyDialog.classList.add('active');
+    }
+
+    startCutsceneBattle() {
+        this.cutsceneActive = true;
+        this.phase = 'cutscene';
+        this.elements.submenu.classList.remove('active');
+        this.elements.soul.classList.remove('active');
+        this.elements.atkMeter.classList.remove('active');
+        document.getElementById('battle-screen').classList.add('cutscene');
+        this.runCutsceneStep(0);
+    }
+
+    runCutsceneStep(index) {
+        const sequence = this.enemy.specialSequence || [];
+        if (index >= sequence.length) {
+            this.cutsceneActive = false;
+            if (this.enemy?.id === 'flowey_tutorial') {
+                this.game.flags.flowey_intro_done = true;
+            }
+            this.endBattle(false);
+            if (this.enemy?.id === 'flowey_tutorial') {
+                this.game.mapEngine.loadRoom('ruins_entrance');
+                this.game.dialogue.show('toriel_rescue');
+            }
+            return;
+        }
+        const step = sequence[index];
+        if (step.type === 'text') {
+            this.elements.text.innerHTML = (step.text || '').replace(/\n/g, '<br>');
+            this.phase = 'cutscene';
+            const wait = step.wait || 1400;
+            setTimeout(() => this.runCutsceneStep(index + 1), wait);
+            return;
+        }
+        if (step.type === 'attack') {
+            const nextOnHit = Number.isInteger(step.nextOnHit) ? step.nextOnHit : index + 1;
+            const nextOnMiss = Number.isInteger(step.nextOnMiss) ? step.nextOnMiss : index + 1;
+            this.startCutsceneAttack(step.attack, step.duration || 180, () => {
+                const nextIndex = this.cutsceneLastHit ? nextOnHit : nextOnMiss;
+                this.runCutsceneStep(nextIndex);
+            });
+        }
+    }
+
+    startCutsceneAttack(attackId, duration, onComplete) {
+        this.phase = 'enemy';
+        this.elements.text.innerHTML = '';
+        this.soul = { x: 280, y: 60 };
+        this.elements.soul.classList.add('active');
+        this.updateSoulPosition();
+
+        this.bullets = [];
+        this.currentAttack = ATTACKS[attackId];
+        if (this.currentAttack) this.currentAttack.setup(this);
+        this.attackTimer = 0;
+        this.cutsceneLastHit = false;
+        this.cutsceneAttackRegistered = false;
+
+        const loop = () => {
+            if (!this.cutsceneActive || this.phase !== 'enemy') return;
+            this.attackTimer++;
+
+            const input = this.game.input;
+            if (input.isUp()) this.soul.y -= this.soulSpeed;
+            if (input.isDownDir()) this.soul.y += this.soulSpeed;
+            if (input.isLeft()) this.soul.x -= this.soulSpeed;
+            if (input.isRight()) this.soul.x += this.soulSpeed;
+            this.soul.x = Utils.clamp(this.soul.x, 0, BATTLE.BOX_WIDTH - 16);
+            this.soul.y = Utils.clamp(this.soul.y, 0, BATTLE.BOX_HEIGHT - 16);
+            this.updateSoulPosition();
+
+            if (this.currentAttack) this.currentAttack.update(this, 1);
+            if (!this.invincible) this.checkBulletCollision();
+
+            if (this.invincible) {
+                this.invincibleTimer--;
+                if (this.invincibleTimer <= 0) {
+                    this.invincible = false;
+                    this.elements.soul.classList.remove('invincible');
+                }
+            }
+
+            this.renderBullets();
+            if (this.attackTimer >= duration) {
+                this.elements.soul.classList.remove('active');
+                this.bullets = [];
+                document.querySelectorAll('.bullet').forEach(b => b.remove());
+                this.phase = 'cutscene';
+                if (!this.cutsceneAttackRegistered) {
+                    this.cutsceneMissCount++;
+                }
+                if (onComplete) onComplete();
+                return;
+            }
+            requestAnimationFrame(loop);
+        };
+
+        requestAnimationFrame(loop);
     }
 }

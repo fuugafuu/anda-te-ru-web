@@ -8,19 +8,35 @@ const ATTACKS = {
             // 「フレンドリィペレット」
             for (let i = 0; i < 5; i++) {
                 battle.bullets.push({
-                    x: 200 + i * 40,
-                    y: -20,
+                    x: 140 + i * 70,
+                    y: -30 - i * 20,
                     vx: 0,
-                    vy: 2,
+                    vy: 1.5,
                     w: 12,
                     h: 12,
                     type: 'pellet',
-                    damage: 19 // 即死級ダメージ
+                    damage: 19,
+                    trackFrames: 35,
+                    speed: 2.2
                 });
             }
         },
         update(battle, dt) {
             for (const b of battle.bullets) {
+                if (b.trackFrames > 0) {
+                    const targetX = battle.soul.x + 8;
+                    const targetY = battle.soul.y + 8;
+                    const dx = targetX - b.x;
+                    const dy = targetY - b.y;
+                    const len = Math.max(1, Math.hypot(dx, dy));
+                    b.vx = (dx / len) * b.speed;
+                    b.vy = (dy / len) * b.speed;
+                    b.trackFrames--;
+                } else {
+                    b.vx *= 0.98;
+                    b.vy += 0.02;
+                }
+                b.x += b.vx;
                 b.y += b.vy;
             }
         }

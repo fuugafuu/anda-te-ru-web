@@ -6,20 +6,37 @@ const ENEMIES = {
         hp: 1, maxHp: 1,
         atk: 0, def: 0,
         exp: 0, gold: 0,
-        sprite: '🌻',
+        spriteClass: 'flowey',
         canFlee: false,
-        check: '* フラウィ - ATK 0 DEF 0\n* きみの ベストフレンド！',
+        specialSequence: [
+            { type: 'text', text: '* それが きみの こころのひかり。' },
+            { type: 'text', text: '* きみそのもの みたいな ものさ。' },
+            { type: 'text', text: '* つよくなるには\n  「LV」が ひつよう。' },
+            { type: 'text', text: '* なんだか わかる？\n  ラブって よぶんだ。' },
+            { type: 'text', text: '* いまから すこし わけてあげるね。' },
+            { type: 'text', text: '* ラブは ちいさな\n  なかよしカプセルに つめるんだ。' },
+            { type: 'attack', attack: 'flowey_pellets', duration: 200, nextOnHit: 10, nextOnMiss: 7 },
+            { type: 'text', text: '* あれ？ もういっかい いくよ。' },
+            { type: 'attack', attack: 'flowey_pellets', duration: 200, nextOnHit: 10, nextOnMiss: 8 },
+            { type: 'text', text: '* おまえ、しってるだろ。' },
+            { type: 'text', text: '* ばかだね。\n* ここは いきるか しぬか だけ。' },
+            { type: 'text', text: '* <span class="battle-text-big">おわりだ</span>' },
+            { type: 'text', text: '* つよい ひかりが さしこんだ。' },
+            { type: 'text', text: '* フラウィーは かぜに ふきとばされた！' },
+            { type: 'text', text: '* 「ここまでよ、わがこ。」' }
+        ],
+        check: '* フラウィ - ATK 0 DEF 0\n* はなの ガイド。にこにこ している。',
         acts: [
             { name: 'チェック', action: 'check' },
             { name: 'はなす', action: 'talk' }
         ],
-        dialogue: ['あはは！', 'ぼくの ペレットを あつめてね！'],
+        dialogue: ['あはは！', 'あおいひかりを あつめてね！'],
         attacks: ['flowey_pellets'],
         onCheck: function(battle) {
             return this.check;
         },
         onTalk: function(battle) {
-            return '* フラウィに はなしかけた。\n* ニヤニヤ わらっている。';
+            return '* フラウィに はなしかけた。\n* はなびらが ゆれている。';
         }
     },
     
@@ -29,7 +46,7 @@ const ENEMIES = {
         hp: 20, maxHp: 20,
         atk: 0, def: 0,
         exp: 0, gold: 0,
-        sprite: '🎭',
+        spriteClass: 'dummy',
         canFlee: true,
         check: '* ダミー - ATK 0 DEF 0\n* コットン100%。きもちが こもっていない。',
         acts: [
@@ -44,6 +61,56 @@ const ENEMIES = {
             return '* ダミーに はなしかけた。\n* ダミーは なにも いわない。';
         }
     },
+
+    ruins_guard: {
+        id: 'ruins_guard',
+        name: 'いせきの みまもり',
+        hp: 36, maxHp: 36,
+        atk: 6, def: 4,
+        exp: 4, gold: 3,
+        spriteClass: 'guard',
+        canFlee: true,
+        check: '* いせきの みまもり - ATK 6 DEF 4\n* ふるい いせきの くうきに なじんでいる。',
+        acts: [
+            { name: 'チェック', action: 'check' },
+            { name: 'あいさつ', action: 'greet' }
+        ],
+        attacks: ['froggit_jump', 'whimsun_moths'],
+        dialogue: ['・・・', 'みまもっている。'],
+        spareCondition: function(battle) {
+            return battle.flags.greeted;
+        },
+        onGreet: function(battle) {
+            battle.flags.greeted = true;
+            battle.spareable = true;
+            return '* みまもりに あいさつした。\n* おだやかに うなずいた。';
+        }
+    },
+
+    mossling: {
+        id: 'mossling',
+        name: 'コケコロ',
+        hp: 24, maxHp: 24,
+        atk: 5, def: 3,
+        exp: 3, gold: 2,
+        spriteClass: 'mossling',
+        canFlee: true,
+        check: '* コケコロ - ATK 5 DEF 3\n* しっとりした こけの におい。',
+        acts: [
+            { name: 'チェック', action: 'check' },
+            { name: 'なだめる', action: 'soothe' }
+        ],
+        attacks: ['whimsun_moths', 'froggit_jump'],
+        dialogue: ['・・・', 'ころころと うごいた。'],
+        spareCondition: function(battle) {
+            return battle.flags.soothed;
+        },
+        onSoothe: function(battle) {
+            battle.flags.soothed = true;
+            battle.spareable = true;
+            return '* コケコロを なだめた。\n* しずかに まるくなった。';
+        }
+    },
     
     froggit: {
         id: 'froggit',
@@ -51,7 +118,7 @@ const ENEMIES = {
         hp: 30, maxHp: 30,
         atk: 4, def: 5,
         exp: 3, gold: 2,
-        sprite: '🐸',
+        spriteClass: 'froggit',
         canFlee: true,
         check: '* フロギー - ATK 4 DEF 5\n* いきるのが たいへんな てき。',
         acts: [
@@ -82,7 +149,7 @@ const ENEMIES = {
         hp: 10, maxHp: 10,
         atk: 5, def: 0,
         exp: 2, gold: 2,
-        sprite: '🦋',
+        spriteClass: 'whimsun',
         canFlee: true,
         check: '* ナキムシ - ATK 5 DEF 0\n* きずつきやすすぎて たたかえない・・・',
         acts: [
@@ -106,7 +173,7 @@ const ENEMIES = {
         hp: 88, maxHp: 88,
         atk: 10, def: 10,
         exp: 0, gold: 0,
-        sprite: '👻',
+        spriteClass: 'napstablook',
         canFlee: true,
         isBoss: true,
         check: '* ナプスタブルーク - ATK 10 DEF 10\n* このゴーストは ずっとここにいる。\n  にんげんが いないから・・・',
@@ -141,16 +208,16 @@ const ENEMIES = {
         hp: 440, maxHp: 440,
         atk: 80, def: 80,
         exp: 200, gold: 0,
-        sprite: '🐐',
+        spriteClass: 'toriel',
         canFlee: false,
         isBoss: true,
-        check: '* トリエル - ATK 80 DEF 80\n* 「いせき」のばんにん。\n  ふしぎな やさしさを もっている。',
+        check: '* トリエル - ATK 80 DEF 80\n* ふるい いせきの みちびき。\n  しずかな つよさを もっている。',
         acts: [
             { name: 'チェック', action: 'check' },
             { name: 'はなす', action: 'talk' }
         ],
         attacks: ['toriel_fire_spread', 'toriel_fire_wave'],
-        dialogue: ['・・・', 'なぜ あきらめない？', 'たたかえ または さりなさい！'],
+        dialogue: ['・・・', 'それでも すすむの？', 'あなたを とめるわ。'],
         flags: { talkCount: 0, spareCount: 0 },
         spareCondition: function(battle) {
             return battle.flags.spareCount >= 24;
@@ -160,7 +227,7 @@ const ENEMIES = {
             const talks = [
                 '* トリエルに はなしかけた。\n* ・・・',
                 '* ・・・・・・',
-                '* ことばでは つたわらないようだ。'
+                '* ことばだけでは\n  つたわらないようだ。'
             ];
             return talks[Math.min(battle.flags.talkCount - 1, talks.length - 1)];
         },
@@ -168,7 +235,7 @@ const ENEMIES = {
             battle.flags.spareCount = (battle.flags.spareCount || 0) + 1;
             if (battle.flags.spareCount >= 24) {
                 battle.spareable = true;
-                return '* ・・・わかった。\n  とめられない のね。';
+                return '* ・・・わかった。\n  こころは とめられないのね。';
             }
             return null;
         },
