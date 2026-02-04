@@ -86,6 +86,31 @@ const ENEMIES = {
             return '* みまもりに あいさつした。\n* おだやかに うなずいた。';
         }
     },
+
+    mossling: {
+        id: 'mossling',
+        name: 'コケコロ',
+        hp: 24, maxHp: 24,
+        atk: 5, def: 3,
+        exp: 3, gold: 2,
+        sprite: '🟢',
+        canFlee: true,
+        check: '* コケコロ - ATK 5 DEF 3\n* しっとりした こけの におい。',
+        acts: [
+            { name: 'チェック', action: 'check' },
+            { name: 'なだめる', action: 'soothe' }
+        ],
+        attacks: ['whimsun_moths', 'froggit_jump'],
+        dialogue: ['・・・', 'ころころと うごいた。'],
+        spareCondition: function(battle) {
+            return battle.flags.soothed;
+        },
+        onSoothe: function(battle) {
+            battle.flags.soothed = true;
+            battle.spareable = true;
+            return '* コケコロを なだめた。\n* しずかに まるくなった。';
+        }
+    },
     
     froggit: {
         id: 'froggit',

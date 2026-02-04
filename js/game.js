@@ -173,8 +173,11 @@ class Game {
     
     // オーバーワールド
     startOverworld() {
+        if (this.running) return;
         this.running = true;
-        this.mapEngine.loadRoom(this.currentRoomId);
+        if (!this.mapEngine.currentRoom) {
+            this.mapEngine.loadRoom(this.currentRoomId);
+        }
         this.overworldLoop();
         
     }

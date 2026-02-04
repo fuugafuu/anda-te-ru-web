@@ -147,6 +147,8 @@ const MAPS = {
                 dialogue: 'ruins_bridge_hint'
             }
         ],
+        randomEncounters: ['mossling', 'whimsun'],
+        encounterRate: 0.02,
         exits: [
             { x: 0, y: 120, w: 20, h: 80, to: 'ruins_puzzle2', spawnX: 580, spawnY: 240 },
             { x: 1180, y: 120, w: 20, h: 80, to: 'ruins_crossroads', spawnX: 40, spawnY: 160 }
@@ -172,6 +174,8 @@ const MAPS = {
         music: 'mus_ruins',
         bgColor: '#1a0024',
         spawn: { x: 40, y: 160 },
+        randomEncounters: ['mossling', 'froggit'],
+        encounterRate: 0.02,
         exits: [
             { x: 0, y: 140, w: 20, h: 80, to: 'ruins_bridge', spawnX: 1140, spawnY: 160 },
             { x: 780, y: 140, w: 20, h: 80, to: 'ruins_dummy', spawnX: 40, spawnY: 240 },
@@ -262,6 +266,8 @@ const MAPS = {
         music: 'mus_ruins',
         bgColor: '#1a0026',
         spawn: { x: 40, y: 220 },
+        randomEncounters: ['mossling', 'whimsun'],
+        encounterRate: 0.025,
         npcs: [
             {
                 id: 'ruins_garden_sign',
@@ -294,6 +300,8 @@ const MAPS = {
         music: 'mus_ruins',
         bgColor: '#210028',
         spawn: { x: 40, y: 240 },
+        randomEncounters: ['mossling'],
+        encounterRate: 0.02,
         npcs: [
             {
                 id: 'ruins_storykeeper',
